@@ -46,3 +46,13 @@ Thumbs.db
 
 # Ignore any file ending in ~ (common backup file)
 /*~
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
