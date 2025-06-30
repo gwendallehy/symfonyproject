@@ -3,30 +3,23 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     private string $pseudo;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
-
-
-
 
     #[ORM\Column]
     private string $password;
@@ -52,54 +45,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $picture = null;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Site $site = null;
+
+    #[ORM\OneToMany(targetEntity: Outgoing::class, mappedBy: 'organizer')]
+    private Collection $organizedOutings;
+
+    #[ORM\ManyToMany(targetEntity: Outgoing::class, mappedBy: 'participants')]
+    private Collection $outings;
+
+    public function __construct()
+    {
+        $this->organizedOutings = new ArrayCollection();
+        $this->outings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPseudo(): ?string
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getPseudo(): string
     {
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setPseudo(string $pseudo): void
     {
         $this->pseudo = $pseudo;
-
-        return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string)$this->pseudo;
-    }
-
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): void
     {
         $this->roles = $roles;
-
-        return $this;
     }
 
     public function getPassword(): string
@@ -112,9 +100,105 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
     }
 
-    public function eraseCredentials(): void
+    public function getFirstname(): string
     {
-        // TODO: Implement eraseCredentials() method.
+        return $this->firstname;
     }
-}
 
+    public function setFirstname(string $firstname): void
+    {
+        $this->firstname = $firstname;
+    }
+
+    public function getLastname(): string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): void
+    {
+        $this->lastname = $lastname;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    public function isAdministrator(): bool
+    {
+        return $this->administrator;
+    }
+
+    public function setAdministrator(bool $administrator): void
+    {
+        $this->administrator = $administrator;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): void
+    {
+        $this->picture = $picture;
+    }
+
+    public function getSite(): ?Site
+    {
+        return $this->site;
+    }
+
+    public function setSite(?Site $site): void
+    {
+        $this->site = $site;
+    }
+
+    public function getOrganizedOutings(): Collection
+    {
+        return $this->organizedOutings;
+    }
+
+    public function setOrganizedOutings(Collection $organizedOutings): void
+    {
+        $this->organizedOutings = $organizedOutings;
+    }
+
+    public function getOutings(): Collection
+    {
+        return $this->outings;
+    }
+
+    public function setOutings(Collection $outings): void
+    {
+        $this->outings = $outings;
+    }
+
+
+}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OutgoingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,26 +20,48 @@ class Outgoing
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?\DateTime $dateBegin = null;
+    private ?\DateTimeInterface $dateBegin = null;
 
     #[ORM\Column]
     private ?\DateInterval $duration = null;
 
     #[ORM\Column]
-    private ?\DateTime $dateSubscriptionLimit = null;
+    private ?\DateTimeInterface $dateSubscriptionLimit = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
+    #[ORM\Column]
     private ?int $nbSubscriptionMax = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $descrpition = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $state = null;
+    #[ORM\ManyToOne]
+    private ?Etat $etat = null;
+
+    #[ORM\ManyToOne(inversedBy: 'organizedOutings')]
+    private ?User $organizer = null;
+
+    #[ORM\ManyToOne]
+    private ?Site $site = null;
+
+    #[ORM\ManyToOne]
+    private ?Place $place = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'outings')]
+    private Collection $participants;
+
+    public function __construct()
+    {
+        $this->participants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getName(): ?string
@@ -45,23 +69,19 @@ class Outgoing
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
-    public function getDateBegin(): ?\DateTime
+    public function getDateBegin(): ?\DateTimeInterface
     {
         return $this->dateBegin;
     }
 
-    public function setDateBegin(\DateTime $dateBegin): static
+    public function setDateBegin(?\DateTimeInterface $dateBegin): void
     {
         $this->dateBegin = $dateBegin;
-
-        return $this;
     }
 
     public function getDuration(): ?\DateInterval
@@ -69,23 +89,19 @@ class Outgoing
         return $this->duration;
     }
 
-    public function setDuration(\DateInterval $duration): static
+    public function setDuration(?\DateInterval $duration): void
     {
         $this->duration = $duration;
-
-        return $this;
     }
 
-    public function getDateSubscriptionLimit(): ?\DateTime
+    public function getDateSubscriptionLimit(): ?\DateTimeInterface
     {
         return $this->dateSubscriptionLimit;
     }
 
-    public function setDateSubscriptionLimit(\DateTime $dateSubscriptionLimit): static
+    public function setDateSubscriptionLimit(?\DateTimeInterface $dateSubscriptionLimit): void
     {
         $this->dateSubscriptionLimit = $dateSubscriptionLimit;
-
-        return $this;
     }
 
     public function getNbSubscriptionMax(): ?int
@@ -93,34 +109,70 @@ class Outgoing
         return $this->nbSubscriptionMax;
     }
 
-    public function setNbSubscriptionMax(int $nbSubscriptionMax): static
+    public function setNbSubscriptionMax(?int $nbSubscriptionMax): void
     {
         $this->nbSubscriptionMax = $nbSubscriptionMax;
-
-        return $this;
     }
 
-    public function getDescrpition(): ?string
+    public function getDescription(): ?string
     {
-        return $this->descrpition;
+        return $this->description;
     }
 
-    public function setDescrpition(?string $descrpition): static
+    public function setDescription(?string $description): void
     {
-        $this->descrpition = $descrpition;
-
-        return $this;
+        $this->description = $description;
     }
 
-    public function getState(): ?int
+    public function getEtat(): ?Etat
     {
-        return $this->state;
+        return $this->etat;
     }
 
-    public function setState(int $state): static
+    public function setEtat(?Etat $etat): void
     {
-        $this->state = $state;
-
-        return $this;
+        $this->etat = $etat;
     }
+
+    public function getOrganizer(): ?User
+    {
+        return $this->organizer;
+    }
+
+    public function setOrganizer(?User $organizer): void
+    {
+        $this->organizer = $organizer;
+    }
+
+    public function getSite(): ?Site
+    {
+        return $this->site;
+    }
+
+    public function setSite(?Site $site): void
+    {
+        $this->site = $site;
+    }
+
+    public function getPlace(): ?Place
+    {
+        return $this->place;
+    }
+
+    public function setPlace(?Place $place): void
+    {
+        $this->place = $place;
+    }
+
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function setParticipants(Collection $participants): void
+    {
+        $this->participants = $participants;
+    }
+
+
 }

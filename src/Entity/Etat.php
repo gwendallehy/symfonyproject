@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SiteRepository;
+use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SiteRepository::class)]
-class Site
+#[ORM\Entity(repositoryClass: EtatRepository::class)]
+class Etat
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,17 +16,13 @@ class Site
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $name = null;
+    private ?string $libelle = null;
 
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'site')]
-    private Collection $users;
-
-    #[ORM\OneToMany(targetEntity: Outgoing::class, mappedBy: 'site')]
+    #[ORM\OneToMany(targetEntity: Outgoing::class, mappedBy: 'etat')]
     private Collection $outings;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->outings = new ArrayCollection();
     }
 
@@ -40,24 +36,14 @@ class Site
         $this->id = $id;
     }
 
-    public function getName(): ?string
+    public function getLibelle(): ?string
     {
-        return $this->name;
+        return $this->libelle;
     }
 
-    public function setName(?string $name): void
+    public function setLibelle(?string $libelle): void
     {
-        $this->name = $name;
-    }
-
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function setUsers(Collection $users): void
-    {
-        $this->users = $users;
+        $this->libelle = $libelle;
     }
 
     public function getOutings(): Collection
