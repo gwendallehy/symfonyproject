@@ -35,9 +35,10 @@ class Site
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): static
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getName(): ?string
@@ -45,9 +46,10 @@ class Site
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(?string $name): static
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getUsers(): Collection
@@ -55,9 +57,10 @@ class Site
         return $this->users;
     }
 
-    public function setUsers(Collection $users): void
+    public function setUsers(Collection $users): static
     {
         $this->users = $users;
+        return $this;
     }
 
     public function getOutings(): Collection
@@ -65,9 +68,10 @@ class Site
         return $this->outings;
     }
 
-    public function setOutings(Collection $outings): void
+    public function setOutings(Collection $outings): static
     {
         $this->outings = $outings;
+        return $this;
     }
 
 

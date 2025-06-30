@@ -35,9 +35,10 @@ class City
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): static
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getName(): ?string
@@ -45,9 +46,10 @@ class City
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(?string $name): static
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getPostalCode(): ?int
@@ -55,9 +57,10 @@ class City
         return $this->postalCode;
     }
 
-    public function setPostalCode(?int $postalCode): void
+    public function setPostalCode(?int $postalCode): static
     {
         $this->postalCode = $postalCode;
+        return $this;
     }
 
     public function getPlaces(): Collection
@@ -65,8 +68,9 @@ class City
         return $this->places;
     }
 
-    public function setPlaces(Collection $places): void
+    public function setPlaces(Collection $places): static
     {
         $this->places = $places;
+        return $this;
     }
 }
