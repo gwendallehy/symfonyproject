@@ -19,14 +19,14 @@ class Outgoing
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateBegin = null;
 
-    #[ORM\Column]
-    private ?\DateInterval $duration = null;
-
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateSubscriptionLimit = null;
+
+    #[ORM\Column(type: 'integer')]
+    private ?int $duration = null;
 
     #[ORM\Column]
     private ?int $nbSubscriptionMax = null;
@@ -87,16 +87,17 @@ class Outgoing
         return $this;
     }
 
-    public function getDuration(): ?\DateInterval
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
 
-    public function setDuration(?\DateInterval $duration): static
+    public function setDuration(?int $duration): static
     {
         $this->duration = $duration;
         return $this;
     }
+
 
     public function getDateSubscriptionLimit(): ?\DateTimeInterface
     {

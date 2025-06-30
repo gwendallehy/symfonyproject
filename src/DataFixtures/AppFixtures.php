@@ -26,10 +26,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Sites
-        $site1 = (new Site())->setName('Paris');
-        $site2 = (new Site())->setName('Lyon');
-        $manager->persist($site1);
-        $manager->persist($site2);
+        $sitesData = ['Paris', 'Lyon', 'Marseille', 'Bordeaux'];
+        $sites = [];
+        foreach ($sitesData as $siteName) {
+            $site = (new Site())->setName($siteName);
+            $manager->persist($site);
+            $sites[] = $site;
+        }
 
         // États
         $states = [];
@@ -40,17 +43,39 @@ class AppFixtures extends Fixture
         }
 
         // Villes
-        $city = (new City())->setName('Paris')->setPostalCode(75000);
-        $manager->persist($city);
+        $citiesData = [
+            ['name' => 'Paris', 'postalCode' => 75000],
+            ['name' => 'Lyon', 'postalCode' => 69000],
+            ['name' => 'Marseille', 'postalCode' => 13000],
+            ['name' => 'Bordeaux', 'postalCode' => 33000],
+        ];
+        $cities = [];
+        foreach ($citiesData as $cityData) {
+            $city = (new City())
+                ->setName($cityData['name'])
+                ->setPostalCode($cityData['postalCode']);
+            $manager->persist($city);
+            $cities[] = $city;
+        }
 
-        // Lieux
-        $place = (new Place())
-            ->setName('Parc de la Villette')
-            ->setStreet('211 Avenue Jean Jaurès')
-            ->setLatitude(48.889)
-            ->setLongitude(2.393);
-        $place->setCity($city);
-        $manager->persist($place);
+        // Lieux (Places)
+        $placesData = [
+            ['name' => 'Parc de la Villette', 'street' => '211 Avenue Jean Jaurès', 'lat' => 48.889, 'lng' => 2.393, 'city' => $cities[0]],
+            ['name' => 'Parc de la Tête d\'Or', 'street' => '69006 Lyon', 'lat' => 45.7797, 'lng' => 4.8591, 'city' => $cities[1]],
+            ['name' => 'Vieux-Port', 'street' => 'Marseille', 'lat' => 43.2965, 'lng' => 5.3698, 'city' => $cities[2]],
+            ['name' => 'Place de la Bourse', 'street' => 'Bordeaux', 'lat' => 44.8405, 'lng' => -0.5800, 'city' => $cities[3]],
+        ];
+        $places = [];
+        foreach ($placesData as $placeData) {
+            $place = (new Place())
+                ->setName($placeData['name'])
+                ->setStreet($placeData['street'])
+                ->setLatitude($placeData['lat'])
+                ->setLongitude($placeData['lng'])
+                ->setCity($placeData['city']);
+            $manager->persist($place);
+            $places[] = $place;
+        }
 
         // Utilisateurs
         $users = [];
@@ -61,9 +86,9 @@ class AppFixtures extends Fixture
                 ->setLastname("Nom$i")
                 ->setEmail("user$i@example.com")
                 ->setPhone("06010203$i")
-                ->setAdministrator($i === 1) // le premier est admin
+                ->setAdministrator($i === 1)
                 ->setActive(true)
-                ->setSite($i % 2 === 0 ? $site1 : $site2)
+                ->setSite($sites[$i % count($sites)])
                 ->setRoles(['ROLE_USER']);
 
             $user->setPassword(
@@ -74,19 +99,20 @@ class AppFixtures extends Fixture
             $users[] = $user;
         }
 
-        // Sorties
-        for ($j = 1; $j <= 3; $j++) {
+        // Sorties (Outings)
+        $outingCount = 8;
+        for ($j = 1; $j <= $outingCount; $j++) {
             $outing = new Outgoing();
             $outing->setName("Sortie $j")
                 ->setDateBegin((new DateTime())->modify("+$j days"))
-                ->setDuration(new DateInterval('PT2H'))
+                ->setDuration(120)// 2 heures = 120 minutes
                 ->setDateSubscriptionLimit((new DateTime())->modify("+".($j - 1)." days"))
-                ->setNbSubscriptionMax(10)
+                ->setNbSubscriptionMax(10 + $j)
                 ->setDescription("Description de la sortie $j")
                 ->setEtat($states['Ouverte'])
-                ->setSite($site1)
-                ->setOrganizer($users[0])
-                ->setPlace($place);
+                ->setSite($sites[$j % count($sites)])
+                ->setOrganizer($users[array_rand($users)])
+                ->setPlace($places[$j % count($places)]);
 
             $manager->persist($outing);
         }
