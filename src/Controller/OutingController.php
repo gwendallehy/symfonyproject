@@ -2,17 +2,35 @@
 
 namespace App\Controller;
 
+use App\Form\OutingFilterType;
+use App\Repository\OutgoingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\SecurityBundle\Security;
+
 
 class OutingController extends AbstractController
 {
     #[Route('/outings', name: 'app_outing_list')]
-    public function list(): Response
-    {
-        return $this->render('outing/list.html.twig');
+    public function list(
+        Security $security,
+        OutgoingRepository $outgoingRepository,
+        Request $request
+    ): Response {
+        $user = $security->getUser();
+
+        $form = $this->createForm(OutingFilterType::class);
+        $form->handleRequest($request);
+        $filters = $form->getData();
+        $outings = $outgoingRepository->findFilteredOutings($user, $filters ?? []);
+        return $this->render('outing/list.html.twig', [
+            'outings' => $outings,
+            'filterForm' => $form->createView(),
+        ]);
     }
+
 
     #[Route('/outing/create', name: 'app_outing_create')]
     public function create(): Response

@@ -1,0 +1,27 @@
+<h1>Liste des sorties</h1>
+
+{{ form_start(filterForm) }}
+    {{ form_row(filterForm.site) }}
+    {{ form_row(filterForm.search) }}
+    {{ form_row(filterForm.dateStart) }}
+    {{ form_row(filterForm.dateEnd) }}
+    {{ form_row(filterForm.organizer) }}
+    {{ form_row(filterForm.subscribed) }}
+    {{ form_row(filterForm.notSubscribed) }}
+    {{ form_row(filterForm.past) }}
+<button type="submit">Filtrer</button>
+{{ form_end(filterForm) }}
+
+
+<hr>
+
+{% for outing in outings %}
+    <div class="outing">
+        <h2>{{ outing.name }}</h2>
+        <p>Date : {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
+        <p>Organisateur : {{ outing.organizer.pseudo }}</p>
+        <p>Site : {{ outing.site.name }}</p>
+    </div>
+{% else %}
+    <p>Aucune sortie trouvée.</p>
+{% endfor %}
