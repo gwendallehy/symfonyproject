@@ -186,6 +186,17 @@ class Outgoing
         $this->participants = $participants;
         return $this;
     }
+    public function isOpenForSubscription(): bool
+    {
+        return $this->getEtat()->getLibelle() === 'Ouverte'
+            && new \DateTime() < $this->getDateSubscriptionLimit()
+            && count($this->getParticipants()) < $this->getNbSubscriptionMax();
+    }
+
+    public function hasStarted(): bool
+    {
+        return new \DateTime() >= $this->getDateBegin();
+    }
 
 
 }
