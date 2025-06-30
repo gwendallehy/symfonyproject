@@ -65,9 +65,10 @@ class User
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): static
     {
         $this->id = $id;
+        return  $this;
     }
 
     public function getPseudo(): string
@@ -75,9 +76,10 @@ class User
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): void
+    public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
+        return  $this;
     }
 
     public function getRoles(): array
@@ -87,9 +89,10 @@ class User
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): void
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+        return  $this;
     }
 
     public function getPassword(): string
@@ -97,9 +100,10 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password): static
     {
         $this->password = $password;
+        return  $this;
     }
 
     public function getFirstname(): string
@@ -107,9 +111,10 @@ class User
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): void
+    public function setFirstname(string $firstname): static
     {
         $this->firstname = $firstname;
+        return  $this;
     }
 
     public function getLastname(): string
@@ -117,9 +122,10 @@ class User
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): void
+    public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+        return  $this;
     }
 
     public function getEmail(): string
@@ -127,9 +133,10 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email): static
     {
         $this->email = $email;
+        return  $this;
     }
 
     public function getPhone(): string
@@ -137,9 +144,10 @@ class User
         return $this->phone;
     }
 
-    public function setPhone(string $phone): void
+    public function setPhone(string $phone): static
     {
         $this->phone = $phone;
+        return  $this;
     }
 
     public function isAdministrator(): bool
@@ -147,9 +155,10 @@ class User
         return $this->administrator;
     }
 
-    public function setAdministrator(bool $administrator): void
+    public function setAdministrator(bool $administrator): static
     {
         $this->administrator = $administrator;
+        return  $this;
     }
 
     public function isActive(): bool
@@ -157,9 +166,10 @@ class User
         return $this->active;
     }
 
-    public function setActive(bool $active): void
+    public function setActive(bool $active): static
     {
         $this->active = $active;
+        return  $this;
     }
 
     public function getPicture(): ?string
@@ -167,9 +177,10 @@ class User
         return $this->picture;
     }
 
-    public function setPicture(?string $picture): void
+    public function setPicture(?string $picture): static
     {
         $this->picture = $picture;
+        return  $this;
     }
 
     public function getSite(): ?Site
@@ -177,9 +188,10 @@ class User
         return $this->site;
     }
 
-    public function setSite(?Site $site): void
+    public function setSite(?Site $site): static
     {
         $this->site = $site;
+        return  $this;
     }
 
     public function getOrganizedOutings(): Collection
@@ -187,9 +199,10 @@ class User
         return $this->organizedOutings;
     }
 
-    public function setOrganizedOutings(Collection $organizedOutings): void
+    public function setOrganizedOutings(Collection $organizedOutings): static
     {
         $this->organizedOutings = $organizedOutings;
+        return  $this;
     }
 
     public function getOutings(): Collection
@@ -197,9 +210,10 @@ class User
         return $this->outings;
     }
 
-    public function setOutings(Collection $outings): void
+    public function setOutings(Collection $outings): static
     {
         $this->outings = $outings;
+        return  $this;
     }
 
 

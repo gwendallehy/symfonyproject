@@ -1,0 +1,9 @@
+<h1>Annuler la sortie : {{ outing.name }}</h1>
+
+<form method="post">
+    <label for="reason">Motif de l'annulation :</label><br>
+    <textarea id="reason" name="reason" rows="4" cols="50" required></textarea><br><br>
+
+    <button type="submit" class="btn btn-danger">Confirmer l’annulation</button>
+    <a href="{{ path('app_outing_show', {'id': outing.id}) }}" class="btn btn-secondary">Annuler</a>
+</form>

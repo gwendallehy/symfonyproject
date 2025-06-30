@@ -1,0 +1,12 @@
+<h1>Sorties archivées</h1>
+
+<ul>
+    {% for outing in outings %}
+        <li>
+            <a href="{{ path('app_outing_show', {'id': outing.id}) }}">{{ outing.name }}</a>
+            - {{ outing.dateBegin|date('d/m/Y H:i') }}
+        </li>
+    {% else %}
+        <li>Aucune sortie archivée</li>
+    {% endfor %}
+</ul>
