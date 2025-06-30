@@ -59,9 +59,10 @@ class Outgoing
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): static
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getName(): ?string
@@ -69,9 +70,10 @@ class Outgoing
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(?string $name): static
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getDateBegin(): ?\DateTimeInterface
@@ -79,9 +81,10 @@ class Outgoing
         return $this->dateBegin;
     }
 
-    public function setDateBegin(?\DateTimeInterface $dateBegin): void
+    public function setDateBegin(?\DateTimeInterface $dateBegin): static
     {
         $this->dateBegin = $dateBegin;
+        return $this;
     }
 
     public function getDuration(): ?\DateInterval
@@ -89,9 +92,10 @@ class Outgoing
         return $this->duration;
     }
 
-    public function setDuration(?\DateInterval $duration): void
+    public function setDuration(?\DateInterval $duration): static
     {
         $this->duration = $duration;
+        return $this;
     }
 
     public function getDateSubscriptionLimit(): ?\DateTimeInterface
@@ -99,9 +103,10 @@ class Outgoing
         return $this->dateSubscriptionLimit;
     }
 
-    public function setDateSubscriptionLimit(?\DateTimeInterface $dateSubscriptionLimit): void
+    public function setDateSubscriptionLimit(?\DateTimeInterface $dateSubscriptionLimit): static
     {
         $this->dateSubscriptionLimit = $dateSubscriptionLimit;
+        return $this;
     }
 
     public function getNbSubscriptionMax(): ?int
@@ -109,9 +114,10 @@ class Outgoing
         return $this->nbSubscriptionMax;
     }
 
-    public function setNbSubscriptionMax(?int $nbSubscriptionMax): void
+    public function setNbSubscriptionMax(?int $nbSubscriptionMax): static
     {
         $this->nbSubscriptionMax = $nbSubscriptionMax;
+        return $this;
     }
 
     public function getDescription(): ?string
@@ -119,9 +125,10 @@ class Outgoing
         return $this->description;
     }
 
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
+        return $this;
     }
 
     public function getEtat(): ?Etat
@@ -129,9 +136,10 @@ class Outgoing
         return $this->etat;
     }
 
-    public function setEtat(?Etat $etat): void
+    public function setEtat(?Etat $etat): static
     {
         $this->etat = $etat;
+        return $this;
     }
 
     public function getOrganizer(): ?User
@@ -139,9 +147,10 @@ class Outgoing
         return $this->organizer;
     }
 
-    public function setOrganizer(?User $organizer): void
+    public function setOrganizer(?User $organizer): static
     {
         $this->organizer = $organizer;
+        return $this;
     }
 
     public function getSite(): ?Site
@@ -149,9 +158,10 @@ class Outgoing
         return $this->site;
     }
 
-    public function setSite(?Site $site): void
+    public function setSite(?Site $site): static
     {
         $this->site = $site;
+        return $this;
     }
 
     public function getPlace(): ?Place
@@ -159,9 +169,10 @@ class Outgoing
         return $this->place;
     }
 
-    public function setPlace(?Place $place): void
+    public function setPlace(?Place $place): static
     {
         $this->place = $place;
+        return $this;
     }
 
     public function getParticipants(): Collection
@@ -169,9 +180,10 @@ class Outgoing
         return $this->participants;
     }
 
-    public function setParticipants(Collection $participants): void
+    public function setParticipants(Collection $participants): static
     {
         $this->participants = $participants;
+        return $this;
     }
 
 

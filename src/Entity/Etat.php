@@ -31,9 +31,10 @@ class Etat
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): static
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getLibelle(): ?string
@@ -41,9 +42,10 @@ class Etat
         return $this->libelle;
     }
 
-    public function setLibelle(?string $libelle): void
+    public function setLibelle(?string $libelle): static
     {
         $this->libelle = $libelle;
+        return $this;
     }
 
     public function getOutings(): Collection
@@ -51,9 +53,10 @@ class Etat
         return $this->outings;
     }
 
-    public function setOutings(Collection $outings): void
+    public function setOutings(Collection $outings): static
     {
         $this->outings = $outings;
+        return $this;
     }
 
 
