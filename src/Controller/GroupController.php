@@ -3,22 +3,26 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class GroupController extends AbstractController
+class GroupController extends AbstractController
 {
-
-///groups/create → Créer un groupe privé (4001)
-///groups/{id} → Voir un groupe
-///groups/manage → Ajouter/supprimer des membres
-
-    #[Route('/group', name: 'app_group')]
-    public function index(): JsonResponse
+    #[Route('/groups', name: 'app_groups')]
+    public function list(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/GroupController.php',
-        ]);
+        return $this->render('group/index.html.twig');
+    }
+
+    #[Route('/group/create', name: 'app_group_create')]
+    public function create(): Response
+    {
+        return $this->render('group/form.html.twig');
+    }
+
+    #[Route('/group/{id}', name: 'app_group_show')]
+    public function show(int $id): Response
+    {
+        return $this->render('group/show.html.twig');
     }
 }
