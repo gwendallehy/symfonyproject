@@ -1,0 +1,21 @@
+<h1>{{ outing.name }}</h1>
+
+<p><strong>Organisateur :</strong> {{ outing.organizer.pseudo }}</p>
+<p><strong>Site :</strong> {{ outing.site.name }}</p>
+<p><strong>Lieu :</strong> {{ outing.place.name }}</p>
+<p><strong>Adresse :</strong> {{ outing.place.street }}</p>
+<p><strong>Date de début :</strong> {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
+<p><strong>Durée :</strong> {{ outing.duration.format('%H:%I') }} h</p>
+<p><strong>Date limite d'inscription :</strong> {{ outing.dateSubscriptionLimit|date('d/m/Y H:i') }}</p>
+<p><strong>Participants max :</strong> {{ outing.nbSubscriptionMax }}</p>
+<p><strong>Description :</strong> {{ outing.description }}</p>
+<h3>Participants ({{ outing.participants|length }})</h3>
+<ul>
+    {% for participant in outing.participants %}
+        <li>{{ participant.pseudo }}</li>
+    {% else %}
+        <li>Aucun participant inscrit.</li>
+    {% endfor %}
+</ul>
+
+<a href="{{ path('app_outing_list') }}">← Retour à la liste</a>
