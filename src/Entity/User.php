@@ -6,10 +6,9 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements PasswordAuthenticatedUserInterface
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -66,10 +65,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function setId(?int $id): static
+    public function setId(?int $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
     public function getPseudo(): string
@@ -77,34 +75,31 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setPseudo(string $pseudo): void
     {
         $this->pseudo = $pseudo;
-        return $this;
     }
 
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): void
     {
         $this->roles = $roles;
-        return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
-        // return the hashed password
         return $this->password;
     }
 
-
-    public function setPassword(string $password): static
+    public function setPassword(string $password): void
     {
         $this->password = $password;
-        return $this;
     }
 
     public function getFirstname(): string
@@ -112,10 +107,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setFirstname(string $firstname): void
     {
         $this->firstname = $firstname;
-        return $this;
     }
 
     public function getLastname(): string
@@ -123,10 +117,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(string $lastname): void
     {
         $this->lastname = $lastname;
-        return $this;
     }
 
     public function getEmail(): string
@@ -134,10 +127,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): void
     {
         $this->email = $email;
-        return $this;
     }
 
     public function getPhone(): string
@@ -145,10 +137,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->phone;
     }
 
-    public function setPhone(string $phone): static
+    public function setPhone(string $phone): void
     {
         $this->phone = $phone;
-        return $this;
     }
 
     public function isAdministrator(): bool
@@ -156,10 +147,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->administrator;
     }
 
-    public function setAdministrator(bool $administrator): static
+    public function setAdministrator(bool $administrator): void
     {
         $this->administrator = $administrator;
-        return $this;
     }
 
     public function isActive(): bool
@@ -167,10 +157,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->active;
     }
 
-    public function setActive(bool $active): static
+    public function setActive(bool $active): void
     {
         $this->active = $active;
-        return $this;
     }
 
     public function getPicture(): ?string
@@ -178,10 +167,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->picture;
     }
 
-    public function setPicture(?string $picture): static
+    public function setPicture(?string $picture): void
     {
         $this->picture = $picture;
-        return $this;
     }
 
     public function getSite(): ?Site
@@ -189,10 +177,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->site;
     }
 
-    public function setSite(?Site $site): static
+    public function setSite(?Site $site): void
     {
         $this->site = $site;
-        return $this;
     }
 
     public function getOrganizedOutings(): Collection
@@ -200,10 +187,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->organizedOutings;
     }
 
-    public function setOrganizedOutings(Collection $organizedOutings): static
+    public function setOrganizedOutings(Collection $organizedOutings): void
     {
         $this->organizedOutings = $organizedOutings;
-        return $this;
     }
 
     public function getOutings(): Collection
@@ -211,10 +197,9 @@ class User implements PasswordAuthenticatedUserInterface
         return $this->outings;
     }
 
-    public function setOutings(Collection $outings): static
+    public function setOutings(Collection $outings): void
     {
         $this->outings = $outings;
-        return $this;
     }
 
 

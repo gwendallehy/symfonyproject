@@ -2,8 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Form\UserType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminPanelController extends AbstractController
@@ -15,9 +20,33 @@ class AdminPanelController extends AbstractController
     }
 
     #[Route('/admin/user/create', name: 'admin_user_create')]
-    public function createUser(): Response
+    public function createUser(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher): Response
     {
-        return $this->render('admin/user_form.html.twig');
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Hash du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+
+            //Définition des rôles....etc
+            $user->setRoles(['ROLE_USER']);
+            $user->setActive(true);
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash("success", "L'utilisateur a bien été créé");
+            return $this->redirectToRoute('admin_users');
+        }
+
+        return $this->render('admin/user_form.html.twig',[
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/admin/user/import', name: 'admin_user_import')]
