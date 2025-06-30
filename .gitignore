@@ -46,3 +46,8 @@ Thumbs.db
 
 # Ignore any file ending in ~ (common backup file)
 /*~
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
