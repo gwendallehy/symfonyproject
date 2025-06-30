@@ -1,0 +1,28 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: pseudo  # ou email si tu veux identifier via l’email
+
+    firewalls:
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: login
+                check_path: login
+                username_parameter: _username
+                password_parameter: _password
+                default_target_path: home  # page de redirection après login
+            logout:
+                path: logout
+                target: login
+
+    access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
