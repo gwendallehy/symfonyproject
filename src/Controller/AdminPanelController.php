@@ -3,23 +3,32 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class AdminPanelController extends AbstractController
+class AdminPanelController extends AbstractController
 {
-
-///admin/users → Gérer les utilisateurs
-///admin/outing/cancel/{id} → Annuler une sortie (2012)
-///admin/groups → Voir et gérer groupes privés
-///admin/dashboard → Tableau de bord administrateur
-
-    #[Route('/admin/panel', name: 'app_admin_panel')]
-    public function index(): JsonResponse
+    #[Route('/admin/users', name: 'admin_users')]
+    public function listUsers(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/AdminPanelController.php',
-        ]);
+        return $this->render('admin/users.html.twig');
+    }
+
+    #[Route('/admin/user/create', name: 'admin_user_create')]
+    public function createUser(): Response
+    {
+        return $this->render('admin/user_form.html.twig');
+    }
+
+    #[Route('/admin/user/import', name: 'admin_user_import')]
+    public function importUsers(): Response
+    {
+        return $this->render('admin/user_form.html.twig'); // peut changer
+    }
+
+    #[Route('/admin/outing/{id}/cancel', name: 'admin_outing_cancel')]
+    public function cancelOutingAsAdmin(int $id): Response
+    {
+        return $this->render('admin/cancel_outing.html.twig');
     }
 }

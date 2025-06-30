@@ -3,27 +3,44 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-final class OutingController extends AbstractController
+class OutingController extends AbstractController
 {
-///outings → Liste des sorties (2001)
-///outing/create → Création de sortie (2002)
-///outing/register/{id} → Inscription à une sortie (2003)
-///outing/unregister/{id} → Désistement (2004)
-///outing/cancel/{id} → Annulation par l'organisateur (2006)
-///outing/archive → Archive des sorties (2007)
-///outing/participants/{id} → Voir participants + profil (2008)
-///
-    #[Route('/outing', name: 'app_outing')]
-    public function index(): JsonResponse
+    #[Route('/outings', name: 'app_outing_list')]
+    public function list(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/OutingController.php',
-        ]);
+        return $this->render('outing/list.html.twig');
     }
 
+    #[Route('/outing/create', name: 'app_outing_create')]
+    public function create(): Response
+    {
+        return $this->render('outing/form.html.twig');
+    }
 
+    #[Route('/outing/{id}', name: 'app_outing_show')]
+    public function show(int $id): Response
+    {
+        return $this->render('outing/show.html.twig');
+    }
+
+    #[Route('/outing/{id}/edit', name: 'app_outing_edit')]
+    public function edit(int $id): Response
+    {
+        return $this->render('outing/form.html.twig');
+    }
+
+    #[Route('/outing/{id}/cancel', name: 'app_outing_cancel')]
+    public function cancel(int $id): Response
+    {
+        return $this->render('outing/cancel.html.twig');
+    }
+
+    #[Route('/outings/archive', name: 'app_outing_archive')]
+    public function archive(): Response
+    {
+        return $this->render('outing/archive.html.twig');
+    }
 }
