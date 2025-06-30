@@ -164,4 +164,66 @@ class OutingController extends AbstractController
             'outings' => $pastOutings,
         ]);
     }
+
+    #[Route('/outing/{id}/subscribe', name: 'app_outing_subscribe')]
+    public function subscribe(
+        int $id,
+        OutgoingRepository $outgoingRepository,
+        Security $security,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $security->getUser();
+        $outing = $outgoingRepository->find($id);
+
+        if (!$outing || !$user) {
+            throw $this->createNotFoundException('Sortie ou utilisateur non trouvé.');
+        }
+
+        if (!$outing->isOpenForSubscription()) {
+            $this->addFlash('error', 'Vous ne pouvez pas vous inscrire à cette sortie.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        if ($outing->getParticipants()->contains($user)) {
+            $this->addFlash('info', 'Vous êtes déjà inscrit.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        $outing->addParticipant($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Inscription réussie.');
+        return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+    }
+    #[Route('/outing/{id}/unsubscribe', name: 'app_outing_unsubscribe')]
+    public function unsubscribe(
+        int $id,
+        OutgoingRepository $outgoingRepository,
+        Security $security,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $user = $security->getUser();
+        $outing = $outgoingRepository->find($id);
+
+        if (!$outing || !$user) {
+            throw $this->createNotFoundException('Sortie ou utilisateur non trouvé.');
+        }
+
+        if ($outing->hasStarted()) {
+            $this->addFlash('error', 'Vous ne pouvez plus vous désister : la sortie a commencé.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        if (!$outing->getParticipants()->contains($user)) {
+            $this->addFlash('info', 'Vous n’êtes pas inscrit à cette sortie.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        $outing->removeParticipant($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Vous vous êtes désisté.');
+        return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+    }
+
 }

@@ -14,15 +14,14 @@ security:
             lazy: true
             provider: app_user_provider
             form_login:
-                login_path: login
-                check_path: login
+                login_path: app_login
+                check_path: app_login
                 username_parameter: _username
                 password_parameter: _password
-                default_target_path: home  # page de redirection après login
             logout:
-                path: logout
-                target: login
+                path: app_logout
+                target: app_login
 
     access_control:
-#        - { path: ^/login, roles: PUBLIC_ACCESS }
-#        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }

@@ -1,6 +1,6 @@
-{% extends 'base.html.twig' %}
+{#{% extends 'base.html.twig' %}#}
 
-{% block body %}
+{#{% block body %}#}
     <h1>Connexion</h1>
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -20,4 +20,4 @@
     </form>
 
     <a href="#">Mot de passe oublié</a>
-{% endblock %}
+{#{% endblock %}#}
