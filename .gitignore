@@ -1,10 +1,48 @@
+# Symfony Standard Edition / Flex
 
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
+### Vendor ###
 /vendor/
-###< symfony/framework-bundle ###
+
+### Cache & Logs ###
+/var/cache/
+/var/log/
+/var/sessions/
+
+### Symfony Dotenv ###
+.env.local
+.env.*.local
+.env.test
+
+### PHPStorm ###
+.idea/
+
+### Composer ###
+/composer.lock
+/composer.phar
+
+### Node ###
+/node_modules/
+/yarn.lock
+/pnpm-lock.yaml
+/package-lock.json
+
+### Build Assets ###
+/public/build/
+/public/bundles/
+
+### Tests ###
+/phpunit.xml
+/phpunit.xml.dist
+
+### Coverage ###
+/coverage/
+
+### Misc ###
+/.env.test.local
+/.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignore any file ending in ~ (common backup file)
+/*~
