@@ -15,9 +15,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\SecurityBundle\Security;
 
-
 class OutingController extends AbstractController
 {
+    /**
+     * US 2001 - Afficher les sorties par site
+     * En tant que participant, je peux lister les sorties publiées sur chaque site,
+     * celles auxquelles je suis inscrit et celles dont je suis l’organisateur.
+     * Je peux filtrer cette liste suivant différents critères.
+     */
     #[Route('/', name: 'app_outing_list')]
     public function list(
         Security $security,
@@ -25,7 +30,6 @@ class OutingController extends AbstractController
         Request $request
     ): Response {
         $user = $security->getUser();
-
         $form = $this->createForm(OutingFilterType::class);
         $form->handleRequest($request);
         $filters = $form->getData();
@@ -36,7 +40,10 @@ class OutingController extends AbstractController
         ]);
     }
 
-
+    /**
+     * US 2002 - Créer une sortie
+     * En tant qu'organisateur, je peux créer une nouvelle sortie.
+     */
     #[Route('/outing/create', name: 'app_outing_create')]
     public function create(
         Security $security,
@@ -54,9 +61,8 @@ class OutingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-             $etat = $etatRepository->findOneBy(['libelle' => 'Créée']);
-             $outing->setEtat($etat);
-
+            $etat = $etatRepository->findOneBy(['libelle' => 'Créée']);
+            $outing->setEtat($etat);
             $entityManager->persist($outing);
             $entityManager->flush();
 
@@ -67,6 +73,10 @@ class OutingController extends AbstractController
             'outingForm' => $form->createView(),
         ]);
     }
+
+    /**
+     * Détail d'une sortie
+     */
 
     #[Route('/outing/{id}', name: 'app_outing_show')]
     public function show(int $id, OutgoingRepository $outgoingRepository): Response
@@ -82,6 +92,10 @@ class OutingController extends AbstractController
         ]);
     }
 
+    /**
+     * Éditer une sortie (réservé à l'organisateur)
+     */
+
     #[Route('/outing/{id}/edit', name: 'app_outing_edit')]
     public function edit(
         int $id,
@@ -91,7 +105,6 @@ class OutingController extends AbstractController
         Security $security
     ): Response {
         $outing = $outgoingRepository->find($id);
-
         if (!$outing) {
             throw $this->createNotFoundException('Sortie non trouvée.');
         }
@@ -106,7 +119,6 @@ class OutingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
             return $this->redirectToRoute('app_outing_show', ['id' => $outing->getId()]);
         }
 
@@ -115,6 +127,10 @@ class OutingController extends AbstractController
         ]);
     }
 
+    /**
+     * US 2006 - Annuler une sortie
+     * En tant qu'organisateur, je peux annuler une sortie non commencée.
+     */
     #[Route('/outing/{id}/cancel', name: 'app_outing_cancel')]
     public function cancel(
         int $id,
@@ -139,7 +155,6 @@ class OutingController extends AbstractController
             $etatAnnulee = $etatRepository->findOneBy(['libelle' => 'Annulée']);
             $outing->setEtat($etatAnnulee);
             $outing->setDescription($outing->getDescription() . "\n\n[ANNULATION] " . $reason);
-
             $entityManager->flush();
 
             return $this->redirectToRoute('app_outing_show', ['id' => $id]);
@@ -150,6 +165,10 @@ class OutingController extends AbstractController
         ]);
     }
 
+    /**
+     * US 2007 - Archiver les sorties
+     * Les sorties passées d’un mois ne sont plus consultables.
+     */
     #[Route('/outings/archive', name: 'app_outing_archive')]
     public function archive(OutgoingRepository $outgoingRepository): Response
     {
@@ -165,6 +184,11 @@ class OutingController extends AbstractController
         ]);
     }
 
+    /**
+     * US 2003 / US 2005 - S'inscrire à une sortie
+     * En tant que participant, je peux m’inscrire si la sortie est publiée
+     * et que la date limite d’inscription n’est pas dépassée.
+     */
     #[Route('/outing/{id}/subscribe', name: 'app_outing_subscribe')]
     public function subscribe(
         int $id,
@@ -195,6 +219,12 @@ class OutingController extends AbstractController
         $this->addFlash('success', 'Inscription réussie.');
         return $this->redirectToRoute('app_outing_show', ['id' => $id]);
     }
+
+    /**
+     * US 2004 - Se désister
+     * Un participant peut se désister avant le début de la sortie.
+     */
+
     #[Route('/outing/{id}/unsubscribe', name: 'app_outing_unsubscribe')]
     public function unsubscribe(
         int $id,
@@ -225,5 +255,4 @@ class OutingController extends AbstractController
         $this->addFlash('success', 'Vous vous êtes désisté.');
         return $this->redirectToRoute('app_outing_show', ['id' => $id]);
     }
-
 }

@@ -1,3 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des sorties{% endblock %}
+
+{% block body %}
 <h1>Liste des sorties</h1>
 
 {{ form_start(filterForm) }}
@@ -25,3 +30,4 @@
 {% else %}
     <p>Aucune sortie trouvée.</p>
 {% endfor %}
+{% endblock %}

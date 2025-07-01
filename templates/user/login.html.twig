@@ -7,8 +7,8 @@
     {% endif %}
 
     <form method="post" action="{{ path('app_login') }}">
-        <label for="username">Identifiant</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" required>
+        <label for="username">Pseudo ou Email</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" required autofocus>
 
         <label for="password">Mot de passe</label>
         <input type="password" id="password" name="_password" required>

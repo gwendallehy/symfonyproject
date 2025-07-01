@@ -19,7 +19,7 @@ $builder
 ->add('firstname', TextType::class)
 ->add('lastname', TextType::class)
 ->add('phone', TextType::class)
-// ajoute les autres champs si nécessaire
+
 ;
 }
 
