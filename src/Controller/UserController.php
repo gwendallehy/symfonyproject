@@ -3,13 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
+use App\Form\UserTypeForm;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -28,7 +29,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/logout', name: 'app_logout')]
-    public function logout():void{
+    public function logout(): void
+    {
         throw new \Exception("Ne pas oublier d'activer logout dans security.yaml");
     }
 
@@ -39,7 +41,6 @@ class UserController extends AbstractController
     }
 
     #[Route('/profile/{id}', name: 'app_user_profile', requirements: ['id' => '\d+'])]
-
     public function profile(int $id, UserRepository $userRepository): Response
     {
         $user = $userRepository->find($id);
@@ -62,40 +63,69 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         Security $security
-    ): Response {
+    ): Response
+    {
         /** @var User $user */
         $user = $security->getUser();
 
-        $form = $this->createForm(UserType::class, $user);
-
+        $form = $this->createForm(UserTypeForm::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form->get('password')->getData();
-            if ($plainPassword) {
-                $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                $user->setPassword($hashedPassword);
-            } else {
-                $entityManager->refresh($user);
+            // Vérification mot de passe + confirmation
+            $password = $form->get('password')->getData();
+            $confirmation = $form->get('confirmation')->getData();
+
+            if ($password) {
+                if ($password !== $confirmation) {
+                    $form->get('confirmation')->addError(new FormError('La confirmation ne correspond pas au mot de passe.'));
+                } else {
+                    $hashedPassword = $passwordHasher->hashPassword($user, $password);
+                    $user->setPassword($hashedPassword);
+                }
             }
+
+            // Upload de la photo si fournie
+            $pictureFile = $form->get('picture')->getData();
+            if ($pictureFile) {
+                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+
+                try {
+                    $pictureFile->move(
+                        $this->getParameter('pictures_directory'),
+                        $newFilename
+                    );
+                    $user->setPicture('pictures/' . $newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Erreur lors de l'upload de la photo");
+                }
+            }
+
+            // Vérification du pseudo unique
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['pseudo' => $user->getPseudo()]);
             if ($existingUser && $existingUser->getId() !== $user->getId()) {
                 $form->get('pseudo')->addError(new FormError('Ce pseudo est déjà utilisé.'));
-            } else {
+            }
+
+            // Si aucune erreur sur le formulaire (y compris la confirmation mot de passe)
+            if ($form->isValid()) {
                 $entityManager->persist($user);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Profil mis à jour avec succès.');
 
                 return $this->redirectToRoute('app_user_profile', ['id' => $user->getId()]);
-
             }
         }
 
         return $this->render('user/edit_profile.html.twig', [
             'userForm' => $form->createView(),
+            'userProfile' => $user,
         ]);
     }
+
 
     #[Route('/profile/photo', name: 'app_user_photo_upload')]
     public function uploadPhoto(): Response

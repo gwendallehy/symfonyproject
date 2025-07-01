@@ -1,34 +1,44 @@
 /* Profile Page Styles */
 
-
-h1 {
-    color: #2c3e50;
-    font-weight: 700;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
 .profile-container {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     background: white;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     padding: 30px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
 }
 
-.profile-image {
+.profile-avatar, .profile-form {
+    flex: 1 1 300px;
+}
+
+.profile-avatar {
+    text-align: center;
+}
+
+.profile-image, .profile-photo {
     width: 150px;
     height: 150px;
     object-fit: cover;
     border-radius: 50%;
-    display: block;
-    margin: 0 auto 25px auto;
     border: 4px solid #12b1a3;
     box-shadow: 0 4px 8px rgba(18,177,163,0.3);
+    margin: 0 auto 25px auto;
+    display: block;
 }
 
-.profile-info p {
+h1, .profile-form h2 {
+    color: #2c3e50;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-info p, .profile-table td {
     font-size: 1.1rem;
     margin: 12px 0;
     line-height: 1.4;
@@ -59,9 +69,15 @@ h1 {
     background-color: #0e8e7e;
 }
 
+.profile-buttons {
+    text-align: center;
+    margin-top: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     .profile-container {
+        flex-direction: column;
         padding: 20px 15px;
     }
 
