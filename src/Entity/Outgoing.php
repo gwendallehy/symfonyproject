@@ -191,6 +191,22 @@ class Outgoing
         $this->participants = $participants;
         return $this;
     }
+
+    public function addParticipant(User $user): static
+    {
+        if (!$this->participants->contains($user)) {
+            $this->participants->add($user);
+        }
+        return $this;
+    }
+
+    public function removeParticipant(User $user): static
+    {
+        $this->participants->removeElement($user);
+        return $this;
+    }
+
+// ... (méthodes suivantes)
     public function isOpenForSubscription(): bool
     {
         return $this->getEtat()->getLibelle() === 'Ouverte'

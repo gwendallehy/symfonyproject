@@ -1,17 +1,22 @@
 {# templates/user/profile.html.twig #}
 
 {% extends 'base.html.twig' %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href={{ asset('css/profile.css') }}>
+{% endblock %}
 {% block title %}Profil de {{ userProfile.pseudo }}{% endblock %}
 
 {% block body %}
+<div class="profile-container">
     <h1>Profil de {{ userProfile.pseudo }}</h1>
 
-    <p><strong>Pseudo :</strong> {{ userProfile.pseudo }}</p>
-    <p><strong>Email :</strong> {{ userProfile.email }}</p>
-    <p><strong>Prénom :</strong> {{ userProfile.firstname }}</p>
-    <p><strong>Nom :</strong> {{ userProfile.lastname }}</p>
-    <p><strong>Téléphone :</strong> {{ userProfile.phone }}</p>
+    <div class="profile-info">
+        <p><strong>Pseudo :</strong> {{ userProfile.pseudo }}</p>
+        <p><strong>Email :</strong> {{ userProfile.email }}</p>
+        <p><strong>Prénom :</strong> {{ userProfile.firstname }}</p>
+        <p><strong>Nom :</strong> {{ userProfile.lastname }}</p>
+        <p><strong>Téléphone :</strong> {{ userProfile.phone }}</p>
+    </div>
 
     {% if app.user and app.user.id == userProfile.id %}
         <a href="{{ path('app_user_profile_edit') }}" class="btn btn-primary">Modifier mon profil</a>
