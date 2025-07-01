@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mon Application Symfony{% endblock %}</title>
+    <link rel="stylesheet" href={{ asset('css/mainStyle.css') }}>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+{% include 'includes/header.html.twig' %}
+
+<main class="container">
+    {% block body %}{% endblock %}
+</main>
+
+{% include 'includes/footer.html.twig' %}
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>

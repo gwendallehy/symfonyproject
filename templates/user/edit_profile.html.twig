@@ -1,0 +1,29 @@
+{# templates/user/edit_profile.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+    <h1>Modifier mon profil</h1>
+
+    {{ form_start(userForm) }}
+
+    {{ form_row(userForm.pseudo) }}
+    {{ form_row(userForm.email) }}
+    {{ form_row(userForm.firstname) }}
+    {{ form_row(userForm.lastname) }}
+    {{ form_row(userForm.phone) }}
+
+    {# Pour le mot de passe, laisse vide si pas de changement #}
+    {{ form_row(userForm.password, {
+        'help': 'Laissez vide si vous ne souhaitez pas changer votre mot de passe.'
+    }) }}
+
+    <button class="btn btn-primary">Enregistrer</button>
+
+    {{ form_end(userForm) }}
+
+    <a href="{{ path('app_user_profile', {'id': app.user.id}) }}">Retour au profil</a>
+
+{% endblock %}

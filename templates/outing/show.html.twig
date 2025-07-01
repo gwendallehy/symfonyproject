@@ -5,7 +5,7 @@
 <p><strong>Lieu :</strong> {{ outing.place.name }}</p>
 <p><strong>Adresse :</strong> {{ outing.place.street }}</p>
 <p><strong>Date de début :</strong> {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
-<p><strong>Durée :</strong> {{ outing.duration.format('%H:%I') }} h</p>
+<p><strong>Durée :</strong> {{ outing.duration }} min</p>
 <p><strong>Date limite d'inscription :</strong> {{ outing.dateSubscriptionLimit|date('d/m/Y H:i') }}</p>
 <p><strong>Participants max :</strong> {{ outing.nbSubscriptionMax }}</p>
 <p><strong>Description :</strong> {{ outing.description }}</p>

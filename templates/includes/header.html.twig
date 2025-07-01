@@ -1,0 +1,17 @@
+<header style="background: #333; padding: 10px;">
+    <nav style="display: flex; justify-content: space-between; align-items: center; color: white;">
+        <div>
+            <a href="{{ path('app_outing_list') }}" style="color: white; text-decoration: none; font-weight: bold;">MonApp</a>
+        </div>
+        <div>
+            <a href="{{ path('app_outing_list') }}" style="color: white; margin-right: 15px;">Sorties</a>
+
+            {% if app.user %}
+                <a href="{{ path('app_user_profile', {'id': app.user.id}) }}" style="color: white; margin-right: 15px;">Profil</a>
+                <a href="{{ path('app_logout') }}" style="color: white;">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" style="color: white;">Connexion</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
