@@ -98,6 +98,11 @@ class Outgoing
         return $this;
     }
 
+    public function isSubscribed(User $user): bool
+    {
+        return $this->participants->contains($user);
+    }
+
 
     public function getDateSubscriptionLimit(): ?\DateTimeInterface
     {

@@ -1,33 +1,64 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des sorties{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href={{ asset('css/outing.css') }}>
+{% endblock %}
 {% block body %}
-<h1>Liste des sorties</h1>
+    <section class="filters">
+        {{ form_start(filterForm) }}
+        <div class="filter-left">
+            {{ form_row(filterForm.site) }}
+            {{ form_row(filterForm.search) }}
+            {{ form_row(filterForm.dateStart) }}
+            {{ form_row(filterForm.dateEnd) }}
+        </div>
+        <div class="filter-right">
+            {{ form_row(filterForm.organizer) }}
+            {{ form_row(filterForm.subscribed) }}
+            {{ form_row(filterForm.notSubscribed) }}
+            {{ form_row(filterForm.past) }}
+            <button type="submit">Rechercher</button>
+        </div>
+        {{ form_end(filterForm) }}
+    </section>
 
-{{ form_start(filterForm) }}
-    {{ form_row(filterForm.site) }}
-    {{ form_row(filterForm.search) }}
-    {{ form_row(filterForm.dateStart) }}
-    {{ form_row(filterForm.dateEnd) }}
-    {{ form_row(filterForm.organizer) }}
-    {{ form_row(filterForm.subscribed) }}
-    {{ form_row(filterForm.notSubscribed) }}
-    {{ form_row(filterForm.past) }}
-<button type="submit">Filtrer</button>
-{{ form_end(filterForm) }}
+    <section class="outings-list">
+        <table>
+            <thead>
+            <tr>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
+                <th>Clôture</th>
+                <th>Inscrits / places</th>
+                <th>État</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for outing in outings %}
+                <tr>
+                    <td>{{ outing.name }}</td>
+                    <td>{{ outing.dateBegin|date('d/m/Y H:i') }}</td>
+                    <td>{{ outing.dateSubscriptionLimit|date('d/m/Y') }}</td>
+                    <td>{{ outing.participants|length }}/{{ outing.nbSubscriptionMax }}</td>
+                    <td>{{ outing.etat.libelle }}</td>
+                    <td>{% if outing.isSubscribed(user) %}X{% endif %}</td>
+                    <td>{{ outing.organizer.pseudo }}</td>
+                    <td>
+                        <a href="#">Afficher</a> -
+                        {# selon état possible #}
+                        <a href="#">S'inscrire</a> / <a href="#">Se désister</a> / <a href="#">Modifier</a> / <a href="#">Annuler</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8">Aucune sortie trouvée.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button class="create-outing">Créer une sortie</button>
+    </section>
 
-
-<hr>
-
-{% for outing in outings %}
-    <div class="outing">
-        <h2>{{ outing.name }}</h2>
-        <p>Date : {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
-        <p>Organisateur : {{ outing.organizer.pseudo }}</p>
-        <p>Site : {{ outing.site.name }}</p>
-    </div>
-{% else %}
-    <p>Aucune sortie trouvée.</p>
-{% endfor %}
 {% endblock %}

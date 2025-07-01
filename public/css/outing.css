@@ -1,0 +1,275 @@
+/* Global */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #b3cec7;
+    padding: 10px 50px;
+    color: white;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+nav a {
+    color: #053c37;
+    font-weight: bold;
+    margin: 0 8px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #12b1a3;
+}
+
+.user-info p {
+    margin: 2px 0;
+    font-size: 0.9rem;
+    color: white;
+}
+
+/* Formulaire filtres */
+form {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin: 20px 50px;
+}
+
+/* Colonne gauche : Site, recherche, date début, date fin */
+.form-left, .filter-left {
+    flex: 1 1 60%;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+
+/* Chaque champ en colonne */
+.form-left > *, .filter-left > * {
+    flex: 1 1 45%;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Colonne droite : checkboxes et bouton */
+.form-right, .filter-right {
+    flex: 1 1 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 200px;
+    justify-content: space-between;
+}
+
+.form-right .checkbox-row, .filter-right > * {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.form-right .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Style checkbox */
+.form-right input[type="checkbox"], .filter-right input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Bouton */
+.form-right button[type="submit"], .filter-right button {
+    padding: 10px 25px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-right button[type="submit"]:hover, .filter-right button:hover {
+    background-color: #0056b3;
+}
+
+/* Labels et inputs */
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+select, input[type="text"], input[type="date"] {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+select:focus, input[type="text"]:focus, input[type="date"]:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+/* Note admin */
+.admin-note {
+    margin: 10px 50px;
+    background: #fff799;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    max-width: 300px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px #cfc300;
+    font-weight: 600;
+}
+
+/* Liste des sorties - tableau */
+.outings-list {
+    margin: 0 50px 50px 50px;
+}
+
+.outings-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.outings-list th, .outings-list td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.outings-list thead {
+    background-color: #f0f0f0;
+    font-weight: 700;
+}
+
+.outings-list tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Bouton créer une sortie */
+.create-outing {
+    margin: 15px 50px 50px 50px;
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 2px solid #053c37;
+    color: #053c37;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.create-outing:hover {
+    background-color: #053c37;
+    color: white;
+}
+
+/* Liste des sorties alternative (style carte) */
+.outing {
+    background-color: white;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.outing:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.outing h2 {
+    margin-bottom: 10px;
+    color: #222;
+    font-weight: 700;
+}
+
+.outing p {
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Titre principal */
+h1 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* Message "Aucune sortie trouvée" */
+p {
+    font-style: italic;
+    color: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    nav {
+        margin: 10px 0;
+    }
+    form {
+        flex-direction: column;
+    }
+    .form-left, .filter-left,
+    .form-right, .filter-right {
+        flex: 1 1 100%;
+    }
+    .form-left > *, .filter-left > *,
+    .form-right .checkbox-row, .filter-right > * {
+        flex: 1 1 100%;
+        min-width: auto;
+        margin-bottom: 10px;
+    }
+    .form-right button[type="submit"], .filter-right button {
+        margin-top: 20px;
+        width: 100%;
+    }
+}
