@@ -1,0 +1,34 @@
+/* profile.css */
+.profile-container {
+    display: flex;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.profile-avatar {
+    flex: 1;
+    text-align: center;
+}
+
+.profile-form {
+    flex: 2;
+}
+
+.profile-form h2 {
+    text-align: center;
+}
+
+table.profile-table td {
+    padding: 0.5rem;
+    vertical-align: middle;
+}
+
+.profile-buttons {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+img.profile-photo {
+    width: 150px;
+    border-radius: 50%;
+}
