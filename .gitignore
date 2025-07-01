@@ -1,4 +1,6 @@
 # Symfony Standard Edition / Flex
+symfony.lock
+phpunit.dist.xml
 
 ### Vendor ###
 /vendor/

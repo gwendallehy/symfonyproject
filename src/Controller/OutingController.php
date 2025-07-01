@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Outgoing;
 use App\Form\OutingFilterType;
+use App\Form\OutingFilterTypeForm;
 use App\Form\OutingTypeForm;
 use App\Repository\EtatRepository;
 use App\Repository\OutgoingRepository;
@@ -31,7 +32,7 @@ class OutingController extends AbstractController
     ): Response {
         $user = $security->getUser();
 
-        $form = $this->createForm(OutingFilterType::class);
+        $form = $this->createForm(OutingFilterTypeForm::class);
         $form->handleRequest($request);
         $filters = $form->getData();
 
