@@ -82,7 +82,7 @@ class OutingController extends AbstractController
      * Détail d'une sortie
      */
 
-    #[Route('/outing/{id}', name: 'app_outing_show')]
+    #[Route('/outing/{id}', name: 'app_outing_show', requirements: ['id' => '\d+'])]
     public function show(int $id, OutgoingRepository $outgoingRepository): Response
     {
         $outing = $outgoingRepository->find($id);
@@ -161,7 +161,7 @@ class OutingController extends AbstractController
             $outing->setDescription($outing->getDescription() . "\n\n[ANNULATION] " . $reason);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+            return $this->redirectToRoute('app_outing_list', ['id' => $id]);
         }
 
         return $this->render('outing/cancel.html.twig', [
