@@ -30,13 +30,17 @@ class OutingController extends AbstractController
         Request $request
     ): Response {
         $user = $security->getUser();
+
         $form = $this->createForm(OutingFilterType::class);
         $form->handleRequest($request);
         $filters = $form->getData();
+
         $outings = $outgoingRepository->findFilteredOutings($user, $filters ?? []);
+
         return $this->render('outing/list.html.twig', [
             'outings' => $outings,
             'filterForm' => $form->createView(),
+            'user' => $user,
         ]);
     }
 

@@ -1,23 +1,43 @@
-{#{% extends 'base.html.twig' %}#}
+<link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
-{#{% block body %}#}
-    <h1>Connexion</h1>
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+{% block body %}
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Sortir<br>.com</h1>
+            <p>Connectez, partagez, vivez vos sorties entre stagiaires ENI !</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
 
-    <form method="post" action="{{ path('app_login') }}">
-        <label for="username">Pseudo ou Email</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" required autofocus>
+        <div class="signin-section">
+            <h2>Connecte-toi !</h2>
 
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" name="_password" required>
+            {% if error %}
+                <div class="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
-        <input type="checkbox" id="remember_me" name="_remember_me">
-        <label for="remember_me">Se souvenir de moi</label>
+            <form method="post" action="{{ path('app_login') }}">
+                <label for="username">Pseudo ou Adresse email </label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}" required autofocus>
 
-        <button type="submit">Connexion</button>
-    </form>
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="_password" required>
 
-    <a href="#">Mot de passe oublié</a>
-{#{% endblock %}#}
+                <div class="remember-me">
+                    <input type="checkbox" id="remember_me" name="_remember_me">
+                    <label for="remember_me">Se souvenir de moi ?</label>
+                </div>
+
+                <button type="submit">Connexion</button>
+            </form>
+
+            <a href="#" class="forgot-password">Lost your password?</a>
+
+        </div>
+    </div>
+
+{% endblock %}

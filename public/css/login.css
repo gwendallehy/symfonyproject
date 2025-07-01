@@ -1,0 +1,186 @@
+/* Reset simple */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('../images/bg-loginform.jpg'); /* Mets ici ta propre image */
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Left side: welcome text + background image */
+.welcome-section {
+    flex: 1;
+
+    color: white;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.welcome-section h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.welcome-section p {
+    max-width: 400px;
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
+/* Social icons container */
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 1.4rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #ff4500; /* couleur accentuée au survol */
+}
+
+/* Right side: sign in form */
+.signin-section {
+    flex: 1;
+    background-color: rgba(247, 247, 247, 0.50);
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #222;
+}
+
+.signin-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.signin-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.signin-section input[type="text"],
+.signin-section input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+button {
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 14px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #e03e00;
+}
+
+.alert {
+    background-color: #ffe0e0;
+    color: #b20000;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.forgot-password {
+    margin-top: 15px;
+    color: #000000;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #ff4500;
+}
+
+.terms {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 25px;
+}
+
+.terms a {
+    color: #666;
+    text-decoration: underline;
+    margin: 0 5px;
+}
+
+.terms a:hover {
+    color: #ff4500;
+}
+
+/* Responsive - tablette et mobile */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .welcome-section,
+    .signin-section {
+        flex: none;
+        width: 100%;
+        padding: 40px 30px;
+        height: auto;
+    }
+
+    .welcome-section {
+        order: 2;
+        text-align: center;
+    }
+
+    .signin-section {
+        order: 1;
+    }
+}
