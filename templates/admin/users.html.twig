@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/adminUser.css') }}">
+{% endblock %}
+{% block body %}
+    <div class="container mt-4">
+        <h1>Liste des utilisateurs</h1>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Pseudo</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Site</th>
+                <th>Actif</th>
+                <th>Administrateur</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.pseudo }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.site ? user.site.name : '—' }}</td>
+                    <td>{{ user.active ? 'Oui' : 'Non' }}</td>
+                    <td>{{ user.administrator ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn-sm btn-primary">Modifier</a>
+
+
+                        {% if user.active %}
+                            <a href="{{ path('admin_user_toggle_active', {id: user.id}) }}" class="btn btn-sm btn-warning"
+                               onclick="return confirm('Voulez-vous vraiment désactiver cet utilisateur ?');">Désactiver</a>
+                        {% else %}
+                            <a href="{{ path('admin_user_toggle_active', {id: user.id}) }}" class="btn btn-sm btn-success"
+                               onclick="return confirm('Voulez-vous vraiment réactiver cet utilisateur ?');">Réactiver</a>
+                        {% endif %}
+
+                        <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" style="display:inline;"
+                              onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ? Cette action est irréversible.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+
+
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">Aucun utilisateur trouvé.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('admin_user_create') }}" class="btn btn-success">Créer un nouvel utilisateur</a>
+    </div>
+{% endblock %}

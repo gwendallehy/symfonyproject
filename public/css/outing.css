@@ -61,7 +61,12 @@ form {
     flex-wrap: wrap;
     margin: 20px 50px;
 }
+.outing-form-container form {
 
+    display: flex;
+    flex-direction: column;
+    justify-content: normal;
+}
 /* Colonne gauche : Site, recherche, date début, date fin */
 .form-left, .filter-left {
     flex: 1 1 60%;
@@ -245,9 +250,183 @@ p {
     font-style: italic;
     color: #888;
 }
+/* --- Sortie détail page --- */
+
+.outing-detail {
+    background-color: white;
+    padding: 25px 30px;
+    margin: 30px 50px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    max-width: 800px;
+}
+
+.outing-detail h1 {
+    color: #053c37;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.outing-detail p {
+    font-size: 1rem;
+    color: #444;
+    margin: 8px 0;
+}
+
+.outing-detail p strong {
+    color: #222;
+}
+
+.outing-detail h3 {
+    margin-top: 35px;
+    margin-bottom: 15px;
+    color: #007BFF;
+    font-weight: 700;
+}
+
+.outing-detail ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #555;
+}
+
+.outing-detail ul li {
+    margin-bottom: 6px;
+}
+
+.outing-detail ul li a {
+    color: #053c37;
+    font-weight: 600;
+}
+
+.outing-detail ul li a:hover {
+    color: #007BFF;
+    text-decoration: underline;
+}
+
+/* Boutons d'inscription/désistement */
+
+.outing-detail .btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 22px;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+}
+
+.outing-detail .btn-success {
+    background-color: #27ae60;
+}
+
+.outing-detail .btn-success:hover {
+    background-color: #219150;
+}
+
+.outing-detail .btn-warning {
+    background-color: #f39c12;
+}
+
+.outing-detail .btn-warning:hover {
+    background-color: #d48806;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .outing-detail {
+        margin: 20px;
+        padding: 20px;
+    }
+}
+
+
+/* ----------- Formulaire Création/Modification Sortie ----------- */
+
+.outing-form-container {
+    margin: 30px 50px;
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.06);
+}
+
+/* Titre */
+.outing-form-container h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #053c37;
+    margin-bottom: 25px;
+}
+
+/* Champs du formulaire */
+.outing-form-container form > div {
+    margin-bottom: 20px;
+}
+
+.outing-form-container label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.outing-form-container input[type="text"],
+.outing-form-container input[type="datetime-local"],
+.outing-form-container input[type="number"],
+.outing-form-container select,
+.outing-form-container textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+.outing-form-container input:focus,
+.outing-form-container textarea:focus,
+.outing-form-container select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Zone texte */
+.outing-form-container textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Bouton */
+.outing-form-container .btn {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.outing-form-container .btn:hover {
+    background-color: #0056b3;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
+    .outing-form-container {
+        padding: 20px;
+        margin: 20px;
+    }
     header {
         flex-direction: column;
         align-items: flex-start;

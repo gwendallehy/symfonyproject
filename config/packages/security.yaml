@@ -12,6 +12,7 @@ security:
 
     firewalls:
         main:
+            user_checker: App\Security\UserChecker
             lazy: true
             provider: app_user_provider
             form_login:
@@ -28,5 +29,6 @@ security:
                 path: /
                 name: REMEMBERME  # Nom du cookie
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: ROLE_USER }
+            - { path: ^/login, roles: PUBLIC_ACCESS }
+            - { path: ^/admin, roles: ROLE_ADMIN }
+            - { path: ^/, roles: ROLE_USER }
