@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\File;
 
 class CsvImportType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('csvFile', FileType::class, [
             'label' => 'CSV File',
