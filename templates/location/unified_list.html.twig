@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/locations.css') }}">
+{% endblock %}
+{% block body %}
+    <h1>Liste des {{ title }}</h1>
+    <a href="{{ path('location_create', {type: type}) }}" class="btn btn-success">Créer un {{ type }}</a>
+
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>
+                    {% if type == 'place' %}
+                        {{ entity.name }} - {{ entity.city.name }} ({{ entity.city.postalcode }})
+                    {% elseif type == 'city' %}
+                        {{ entity.name }} ({{ entity.postalCode }})
+                    {% elseif type == 'site' %}
+                        {{ entity.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('admin_location_edit', {type: type, id: entity.id}) }}">Modifier</a>
+                    <a href="{{ path('admin_location_delete', {type: type, id: entity.id}) }}">Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="3">Aucun résultat.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

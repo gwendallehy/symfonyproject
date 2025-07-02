@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/adminUser.css') }}">
+{% endblock %}
+{% block title %}Création d’un utilisateur{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>{{ editMode is defined and editMode ? 'Modifier un utilisateur' : 'Créer un utilisateur' }}</h1>
+
+
+
+
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.pseudo) }}
+                {{ form_row(form.firstname) }}
+                {{ form_row(form.lastname) }}
+                {{ form_row(form.phone) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.site) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.password) }}
+                {{ form_row(form.confirmation) }}
+                {{ form_row(form.picture) }}
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3">Créer</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

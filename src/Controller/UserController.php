@@ -19,6 +19,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
+    /**
+     * US 1001 - Se connecter
+     * En tant que participant, je peux me connecter avec mon identifiant et mot de passe.
+     */
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -27,19 +31,20 @@ class UserController extends AbstractController
             'error' => $authenticationUtils->getLastAuthenticationError(),
         ]);
     }
-
+    /**
+     * US 1001 (suite) - Se déconnecter
+     * En tant que participant, je peux me déconnecter de mon compte.
+     */
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \Exception("Ne pas oublier d'activer logout dans security.yaml");
     }
 
-    #[Route('/register', name: 'app_register')]
-    public function register(): Response
-    {
-        return $this->render('user/register.html.twig');
-    }
-
+    /**
+     * US 2008 - Afficher le profil d’un autre participant
+     * En tant que participant, je peux consulter le profil public d’un autre utilisateur depuis la fiche sortie.
+     */
     #[Route('/profile/{id}', name: 'app_user_profile', requirements: ['id' => '\d+'])]
     public function profile(int $id, UserRepository $userRepository): Response
     {
@@ -56,6 +61,13 @@ class UserController extends AbstractController
 
     /**
      * @throws ORMException
+     */
+    /**
+     * US 1003 - Modifier son profil
+     * En tant que participant connecté, je peux modifier mes informations personnelles (nom, pseudo, téléphone, etc.).
+     *
+     * US 1004 - Ajouter une photo de profil
+     * En tant que participant, je peux téléverser une photo de profil.
      */
     #[Route('/profile/edit', name: 'app_user_profile_edit')]
     public function editProfile(
@@ -126,13 +138,11 @@ class UserController extends AbstractController
         ]);
     }
 
-
-    #[Route('/profile/photo', name: 'app_user_photo_upload')]
-    public function uploadPhoto(): Response
-    {
-        return $this->render('user/photo_upload.html.twig');
-    }
-
+    /**
+     * US 1005 - Mot de passe oublié
+     * En tant qu'utilisateur, je peux accéder à la page de réinitialisation de mot de passe.
+     * ⚠️ À compléter : traitement + envoi du mail de réinitialisation.
+     */
     #[Route('/reset-password', name: 'app_reset_password')]
     public function resetPassword(): Response
     {

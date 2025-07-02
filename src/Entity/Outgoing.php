@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\EtatRepository;
 use App\Repository\OutgoingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -214,10 +215,70 @@ class Outgoing
             && count($this->getParticipants()) < $this->getNbSubscriptionMax();
     }
 
+    public function isFull(): bool
+    {
+        if ($this->getParticipants()->count() > $this->getNbSubscriptionMax()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function updateEtat(EtatRepository $etatRepository): void
+    {
+        $now = new \DateTime();
+
+        // Si l'état est Annulée, on ne change rien
+        if ($this->getEtat()->getLibelle() === 'Annulée') {
+            return;
+        }
+
+        // Inscription ouverte
+        if ($now <= $this->getDateSubscriptionLimit()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+            $this->setEtat($etat);
+            return;
+        }
+
+        // Inscription clôturée, activité pas encore commencée
+        if ($now > $this->getDateSubscriptionLimit() && $now < $this->getDateBegin()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Clôturée']);
+            $this->setEtat($etat);
+            return;
+        }
+
+        // Activité en cours
+        if ($now >= $this->getDateBegin() && $now <= $this->getDateEnd()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Activité en cours']);
+            $this->setEtat($etat);
+            return;
+        }
+
+        // Activité passée
+        if ($now > $this->getDateEnd()) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Passée']);
+            $this->setEtat($etat);
+            return;
+        }
+    }
+
+
     public function hasStarted(): bool
     {
         return new \DateTime() >= $this->getDateBegin();
     }
+
+    public function getDateEnd(): ?\DateTimeInterface
+    {
+        if (!$this->dateBegin || !$this->duration) {
+            return null; // ou lever une exception si nécessaire
+        }
+
+        $dateEnd = clone $this->dateBegin;
+        $dateEnd->modify('+' . $this->duration . ' minutes');
+
+        return $dateEnd;
+    }
+
 
 
 }

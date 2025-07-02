@@ -46,7 +46,7 @@
                     <td>{{ outing.participants|length }}/{{ outing.nbSubscriptionMax }}</td>
                     <td>{{ outing.etat.libelle }}</td>
                     <td>{% if outing.isSubscribed(user) %}X{% endif %}</td>
-                    <td>{{ outing.organizer.pseudo }}</td>
+                    <td><a href="{{ path('app_user_profile', {'id': outing.organizer.id})}}">{{ outing.organizer.pseudo }}</a></td>
                     <td>
                         <a href="{{ path('app_outing_show', {'id': outing.id}) }}">Afficher</a>
 
@@ -57,7 +57,7 @@
                                 <a href="{{ path('app_outing_unsubscribe', {'id': outing.id}) }}">Se désister</a>
                             {% endif %}
 
-                            {% if app.user.pseudo == outing.organizer.pseudo %}
+                            {% if app.user.pseudo == outing.organizer.pseudo or app.user.administrator %}
                                 <a href="{{ path('app_outing_edit', {'id': outing.id}) }}">Modifier</a>
                                 <a href="{{ path('app_outing_cancel', {'id': outing.id}) }}">Annuler</a>
                             {% endif %}
@@ -71,7 +71,9 @@
             {% endfor %}
             </tbody>
         </table>
-        <button class="create-outing">Créer une sortie</button>
+        <button class="create-outing"><a href="{{ path('app_outing_create') }}" class="create-outing btn btn-primary">
+                Créer une sortie
+            </a></button>
     </section>
 
 {% endblock %}

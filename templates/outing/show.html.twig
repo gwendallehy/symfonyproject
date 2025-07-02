@@ -1,26 +1,36 @@
-<h1>{{ outing.name }}</h1>
+{% extends 'base.html.twig' %}
 
-<p><strong>Organisateur :</strong> {{ outing.organizer.pseudo }}</p>
-<p><strong>Site :</strong> {{ outing.site.name }}</p>
-<p><strong>Lieu :</strong> {{ outing.place.name }}</p>
-<p><strong>Adresse :</strong> {{ outing.place.street }}</p>
-<p><strong>Date de début :</strong> {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
-<p><strong>Durée :</strong> {{ outing.duration }} min</p>
-<p><strong>Date limite d'inscription :</strong> {{ outing.dateSubscriptionLimit|date('d/m/Y H:i') }}</p>
-<p><strong>Participants max :</strong> {{ outing.nbSubscriptionMax }}</p>
-<p><strong>Description :</strong> {{ outing.description }}</p>
-<h3>Participants ({{ outing.participants|length }})</h3>
-<ul>
-    {% for participant in outing.participants %}
-        <li>{{ participant.pseudo }}</li>
-    {% else %}
-        <li>Aucun participant inscrit.</li>
-    {% endfor %}
-</ul>
-{% if outing.isOpenForSubscription() and not outing.participants.contains(app.user) %}
-    <a href="{{ path('app_outing_subscribe', {'id': outing.id}) }}" class="btn btn-success">S'inscrire</a>
-{% elseif outing.participants.contains(app.user) and not outing.hasStarted() %}
-    <a href="{{ path('app_outing_unsubscribe', {'id': outing.id}) }}" class="btn btn-warning">Se désister</a>
-{% endif %}
+{% block title %}Liste des sorties{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href={{ asset('css/outing.css') }}>
+{% endblock %}
+{% block body %}
+    <div class="outing-detail">
+        <h1>{{ outing.name }}</h1>
 
-<a href="{{ path('app_outing_list') }}">← Retour à la liste</a>
+        <p><strong>Organisateur :</strong> {{ outing.organizer.pseudo }}</p>
+        <p><strong>Site :</strong> {{ outing.site.name }}</p>
+        <p><strong>Lieu :</strong> {{ outing.place.name }}</p>
+        <p><strong>Adresse :</strong> {{ outing.place.street }}</p>
+        <p><strong>Date de début :</strong> {{ outing.dateBegin|date('d/m/Y H:i') }}</p>
+        <p><strong>Durée :</strong> {{ outing.duration }} min</p>
+        <p><strong>Date limite d'inscription :</strong> {{ outing.dateSubscriptionLimit|date('d/m/Y H:i') }}</p>
+        <p><strong>Participants max :</strong> {{ outing.nbSubscriptionMax }}</p>
+        <p><strong>Description :</strong> {{ outing.description }}</p>
+
+        <h3>Participants ({{ outing.participants|length }})</h3>
+        <ul>
+            {% for participant in outing.participants %}
+                <li><a href="{{ path('app_user_profile', {'id': participant.id}) }}">{{ participant.pseudo }}</a></li>
+            {% else %}
+                <li>Aucun participant inscrit.</li>
+            {% endfor %}
+        </ul>
+
+        {% if outing.isOpenForSubscription() and not outing.participants.contains(app.user) %}
+            <a href="{{ path('app_outing_subscribe', {'id': outing.id}) }}" class="btn btn-success">S'inscrire</a>
+        {% elseif outing.participants.contains(app.user) and not outing.hasStarted() %}
+            <a href="{{ path('app_outing_unsubscribe', {'id': outing.id}) }}" class="btn btn-warning">Se désister</a>
+        {% endif %}
+    </div>
+{% endblock %}

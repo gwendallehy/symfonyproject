@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Outgoing;
-use App\Form\OutingFilterType;
 use App\Form\OutingFilterTypeForm;
 use App\Form\OutingTypeForm;
 use App\Repository\EtatRepository;
@@ -28,7 +27,9 @@ class OutingController extends AbstractController
     public function list(
         Security $security,
         OutgoingRepository $outgoingRepository,
-        Request $request
+        Request $request,
+        EtatRepository $etatRepository,
+        EntityManagerInterface $entityManager
     ): Response {
         $user = $security->getUser();
 
@@ -37,7 +38,10 @@ class OutingController extends AbstractController
         $filters = $form->getData();
 
         $outings = $outgoingRepository->findFilteredOutings($user, $filters ?? []);
-
+        foreach ($outings as $outing) {
+            $outing->updateEtat($etatRepository);
+        }
+        $entityManager->flush();
         return $this->render('outing/list.html.twig', [
             'outings' => $outings,
             'filterForm' => $form->createView(),
@@ -56,6 +60,9 @@ class OutingController extends AbstractController
         EntityManagerInterface $entityManager,
         EtatRepository $etatRepository
     ): Response {
+
+
+
         $user = $security->getUser();
 
         $outing = new Outgoing();
@@ -114,8 +121,13 @@ class OutingController extends AbstractController
             throw $this->createNotFoundException('Sortie non trouvée.');
         }
 
+        if ($outing->hasStarted()) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier une sortie déjà commencée.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
         $user = $security->getUser();
-        if ($outing->getOrganizer() !== $user) {
+        if ($outing->getOrganizer() !== $user && !$user->isAdministrator()) {
             throw $this->createAccessDeniedException("Vous n'êtes pas autorisé à modifier cette sortie.");
         }
 
@@ -150,10 +162,17 @@ class OutingController extends AbstractController
             throw $this->createNotFoundException('Sortie non trouvée.');
         }
 
-        $user = $security->getUser();
-        if ($outing->getOrganizer() !== $user) {
-            throw $this->createAccessDeniedException('Seul l’organisateur peut annuler cette sortie.');
+        if ($outing->hasStarted()) {
+            $this->addFlash('error', 'Vous ne pouvez pas annuler une sortie déjà commencée.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
         }
+
+
+        $user = $security->getUser();
+        if ($outing->getOrganizer() !== $user && !$user->isAdministrator()) {
+            throw $this->createAccessDeniedException('Seul l’organisateur ou un administrateur peut annuler cette sortie.');
+        }
+
 
         if ($request->isMethod('POST')) {
             $reason = $request->request->get('reason');
@@ -178,8 +197,8 @@ class OutingController extends AbstractController
     public function archive(OutgoingRepository $outgoingRepository): Response
     {
         $pastOutings = $outgoingRepository->createQueryBuilder('o')
-            ->where('o.dateBegin < :now')
-            ->setParameter('now', new \DateTime())
+            ->andWhere('o.dateBegin < :dateLimit')
+            ->setParameter('dateLimit', (new \DateTime())->modify('-1 month'))
             ->orderBy('o.dateBegin', 'DESC')
             ->getQuery()
             ->getResult();
@@ -207,6 +226,17 @@ class OutingController extends AbstractController
         if (!$outing || !$user) {
             throw $this->createNotFoundException('Sortie ou utilisateur non trouvé.');
         }
+
+        if ($outing->getEtat()->getLibelle() === 'Annulée') {
+            $this->addFlash('error', 'Impossible de s’inscrire : sortie annulée.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        if ($outing->isFull()) {
+            $this->addFlash('error', 'La sortie est complète.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
 
         if (!$outing->isOpenForSubscription()) {
             $this->addFlash('error', 'Vous ne pouvez pas vous inscrire à cette sortie.');
@@ -246,6 +276,11 @@ class OutingController extends AbstractController
 
         if ($outing->hasStarted()) {
             $this->addFlash('error', 'Vous ne pouvez plus vous désister : la sortie a commencé.');
+            return $this->redirectToRoute('app_outing_show', ['id' => $id]);
+        }
+
+        if ($outing->getOrganizer() === $user) {
+            $this->addFlash('error', 'L’organisateur ne peut pas se désister de sa propre sortie.');
             return $this->redirectToRoute('app_outing_show', ['id' => $id]);
         }
 
