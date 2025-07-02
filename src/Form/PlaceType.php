@@ -31,11 +31,12 @@ class PlaceType extends AbstractType
             ])
             ->add('latitude', TextType::class)
             ->add('longitude', TextType::class)
-            ->add('postalCode', TextType::class, [
-                'mapped' => false,
-                'disabled' => true,
-                'label' => 'Code postal',
-                'attr' => ['class' => 'postal-code'],
+            ->add('city', EntityType::class, [
+                'class' => City::class,
+                'choice_label' => 'name',
+                'label' => 'Ville',
+                'placeholder' => 'Choisir une ville',
+                'attr' => ['class' => 'city-selector']
             ]);
     }
 

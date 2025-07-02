@@ -42,7 +42,7 @@ class LocationController extends AbstractController
             'title' => $title,
         ]);
     }
-    #[Route('/location/{type}/create', name: 'admin_location_create')]
+    #[Route('/location/{type}/create', name: 'location_create')]
     public function createEntity(string $type, Request $request, EntityManagerInterface $em): Response
     {
         switch ($type) {

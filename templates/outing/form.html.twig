@@ -8,9 +8,27 @@
 <div class="outing-form-container">
     <h1>{{ outingForm.vars.value.id ? 'Modifier la sortie' : 'Créer une sortie' }}</h1>
 
-    {{ form_start(outingForm) }}
-    {{ form_widget(outingForm) }}
-    <button class="btn">Enregistrer</button>
+    { form_start(outingForm) }}
+
+    {{ form_row(outingForm.name) }}
+    {{ form_row(outingForm.dateBegin) }}
+    {{ form_row(outingForm.duration) }}
+    {{ form_row(outingForm.dateSubscriptionLimit) }}
+    {{ form_row(outingForm.nbSubscriptionMax) }}
+    {{ form_row(outingForm.description) }}
+
+    <div class="form-group d-flex align-items-center">
+        {{ form_label(outingForm.place) }}
+        {{ form_widget(outingForm.place) }}
+        <a href="{{ path('location_create', {'type':'place'}) }}" class="btn btn-sm btn-primary ml-2" style="height: 38px; line-height: 38px;">
+            Ajouter un lieu
+        </a>
+    </div>
+
+    {{ form_row(outingForm.site) }}
+
+    <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
+
     {{ form_end(outingForm) }}
 </div>
 {% endblock %}
