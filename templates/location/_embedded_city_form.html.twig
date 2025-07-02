@@ -1,0 +1,10 @@
+{% if cityForm is defined and cityForm is not null %}
+    {{ form_start(cityForm, {'attr': {'id': 'city-embedded-form'}}) }}
+
+    {{ form_row(cityForm.name) }}
+    {{ form_row(cityForm.postalCode) }}
+
+    <button type="submit" class="btn btn-sm btn-primary">Ajouter la ville</button>
+
+    {{ form_end(cityForm) }}
+{% endif %}

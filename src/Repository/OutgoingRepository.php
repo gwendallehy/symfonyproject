@@ -58,8 +58,8 @@ class OutgoingRepository extends ServiceEntityRepository
                 ->setParameter('user', $user);
         }
 
-        if (empty($filters['past'])) {
-            $qb->andWhere('o.dateBegin > :now')
+        if (!empty($filters['past'])) {
+            $qb->andWhere('o.dateBegin < :now')
                 ->setParameter('now', new \DateTime());
         }
 

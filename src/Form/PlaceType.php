@@ -30,14 +30,7 @@ class PlaceType extends AbstractType
                 'attr' => ['class' => 'city-selector']
             ])
             ->add('latitude', TextType::class)
-            ->add('longitude', TextType::class)
-            ->add('city', EntityType::class, [
-                'class' => City::class,
-                'choice_label' => 'name',
-                'label' => 'Ville',
-                'placeholder' => 'Choisir une ville',
-                'attr' => ['class' => 'city-selector']
-            ]);
+            ->add('longitude', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

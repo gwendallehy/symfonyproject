@@ -57,12 +57,12 @@ nav a:hover {
 /* Formulaire filtres */
 form {
     background-color: #fff;
-    padding: 20px 30px;
+    /*padding: 20px 30px;*/
     border-radius: 10px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    /*box-shadow: 0 0 8px rgba(0,0,0,0.05);*/
     display: flex;
     justify-content: space-between;
-    gap: 40px;
+    gap: 20px;
     flex-wrap: wrap;
     margin: 20px 50px;
 }
@@ -206,16 +206,27 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
 
 /* Bouton créer une sortie */
 .create-outing {
-    margin: 15px 50px 50px;
-    padding: 12px 25px;
+    margin: 15px 0px 50px;
+    padding: 0;
+    width: 300px;
+    height: 50px;
     background-color: transparent;
-    border: 2px solid #053c37;
     color: #053c37;
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
     border-radius: 6px;
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a.create-outing {
+    margin: 0;
+    padding: 0;
+}
+
+
+button.create-outing:hover a{
+    color: white;
 }
 
 .create-outing:hover {
@@ -339,9 +350,9 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
 .outing-form-container {
     margin: 30px 50px;
     background-color: white;
-    padding: 30px 40px;
+    /*padding: 30px 40px;*/
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.07);
+    /*box-shadow: 0 0 10px rgba(0,0,0,0.07);*/
 }
 
 .outing-form-container h1 {
@@ -351,9 +362,6 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
     margin-bottom: 30px;
 }
 
-.outing-form-container form > div {
-    margin-bottom: 20px;
-}
 
 .outing-form-container label {
     font-weight: 700;
@@ -373,6 +381,7 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
     border: 1px solid #ccc;
     border-radius: 6px;
     transition: border 0.3s ease;
+    margin-bottom: 10px;
 }
 
 .outing-form-container input:focus,

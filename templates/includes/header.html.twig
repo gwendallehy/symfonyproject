@@ -10,7 +10,6 @@
                 <a href="{{ path('location_list', {'type': 'city'}) }}">Villes</a>
 
 
-                {# Lien visible uniquement aux administrateurs #}
                 {% if app.user.administrator %}
                     <a href="{{ path('location_list', {'type': 'site'}) }}">Sites</a>
                     <a href="{{ path('admin_users') }}">Gestion des utilisateurs</a>
