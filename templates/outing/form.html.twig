@@ -8,7 +8,7 @@
 <div class="outing-form-container">
     <h1>{{ outingForm.vars.value.id ? 'Modifier la sortie' : 'Créer une sortie' }}</h1>
 
-    { form_start(outingForm) }}
+    {{ form_start(outingForm) }}
 
     {{ form_row(outingForm.name) }}
     {{ form_row(outingForm.dateBegin) }}

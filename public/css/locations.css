@@ -1,5 +1,4 @@
-/* Styles pour les pages admin de gestion des entités (lieux, villes, sites) */
-
+/* locations.css*/
 /* Titres */
 h1 {
     font-size: 2rem;
@@ -32,6 +31,7 @@ h1 {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
+    margin-top: 20px;
 }
 
 .table thead {

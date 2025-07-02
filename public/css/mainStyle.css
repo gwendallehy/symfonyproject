@@ -1,4 +1,6 @@
-/* Global */
+/* MainStyle.css */
+
+/* Reset & Base */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -9,29 +11,26 @@ body {
 a {
     color: #007BFF;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 a:hover {
     text-decoration: underline;
+    color: #0056b3;
 }
-
-/*.container {*/
-/*    max-width: 1100px;*/
-/*    margin: 0 auto;*/
-/*    padding: 20px;*/
-/*}*/
 
 /* Header */
 header {
-    background-color: rgb(179,206,199 );
+    background-color: rgb(179, 206, 199);
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 50px 10px 50px;
+    padding: 10px 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-header img{
+header img {
     width: 150px;
 }
 
@@ -43,8 +42,10 @@ header .header-container {
 
 nav a {
     margin-left: 20px;
-    color: rgb(5,60,55);
-    font-weight: bold;
+    color: rgb(5, 60, 55);
+    font-weight: 700;
+    font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
 nav a:hover {
@@ -52,12 +53,19 @@ nav a:hover {
     text-decoration: none;
 }
 
-/* Main */
+/* Main Content */
 main {
-    background-color: white;
+    background-color: #fff;
     min-height: 70vh;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    margin: 30px 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    padding: 25px 40px;
+    transition: box-shadow 0.3s ease;
+}
+
+main:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 /* Footer */
@@ -66,14 +74,28 @@ footer {
     color: #ddd;
     text-align: center;
     padding: 15px 0;
-    font-size: 0.9em;
-    margin-top: 40px;
+    font-size: 0.9rem;
+    margin-top: 50px;
 }
 
 footer a {
     color: #ccc;
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
-    color: white;
+    color: #fff;
+}
+
+/* Utility */
+h1 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #222;
+}
+
+p {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.5;
 }
