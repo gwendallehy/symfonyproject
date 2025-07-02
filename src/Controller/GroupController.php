@@ -17,7 +17,7 @@ class GroupController extends AbstractController
     #[Route('/group/create', name: 'app_group_create')]
     public function create(): Response
     {
-        return $this->render('group/form.html.twig');
+        return $this->render('group/unified_form.html.twig');
     }
 
     #[Route('/group/{id}', name: 'app_group_show')]
