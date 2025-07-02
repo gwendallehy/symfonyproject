@@ -10,9 +10,11 @@ use App\Form\PlaceType;
 use App\Form\SiteForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LocationController extends AbstractController
 {
@@ -42,6 +44,39 @@ class LocationController extends AbstractController
             'title' => $title,
         ]);
     }
+
+    #[Route('/location/city/create-ajax', name: 'location_city_create_ajax', methods: ['POST'])]
+    public function createCityAjax(Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
+    {
+        $city = new City();
+        $form = $this->createForm(CityForm::class, $city);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($city);
+            $em->flush();
+
+            return new JsonResponse([
+                'success' => true,
+                'city' => [
+                    'id' => $city->getId(),
+                    'name' => $city->getName(),
+                ],
+            ]);
+        }
+
+        // Si erreur de validation, renvoyer les messages d’erreur (simplifié)
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        return new JsonResponse([
+            'success' => false,
+            'errors' => $errors,
+        ], 400);
+    }
+
     #[Route('/location/{type}/create', name: 'location_create')]
     public function createEntity(string $type, Request $request, EntityManagerInterface $em): Response
     {
@@ -49,6 +84,8 @@ class LocationController extends AbstractController
             case 'place':
                 $entity = new Place();
                 $form = $this->createForm(PlaceType::class, $entity);
+                // 👇 On prépare le formulaire de ville uniquement pour les lieux
+                $cityForm = $this->createForm(CityForm::class, new City());
                 break;
             case 'site':
                 $entity = new Site();
@@ -68,13 +105,14 @@ class LocationController extends AbstractController
             $em->persist($entity);
             $em->flush();
 
-            $this->addFlash('success', ucfirst($type).' créé avec succès.');
+            $this->addFlash('success', ucfirst($type) . ' créé avec succès.');
             return $this->redirectToRoute('location_list', ['type' => $type]);
         }
 
         return $this->render('location/unified_form.html.twig', [
             'form' => $form->createView(),
             'type' => $type,
+            'cityForm' => isset($cityForm) ? $cityForm->createView() : null,
         ]);
     }
     #[Route('/admin/location/{type}/{id}/edit', name: 'admin_location_edit')]
