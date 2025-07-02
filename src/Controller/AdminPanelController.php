@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Site;
 use App\Entity\User;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\UserTypeForm;
+use App\Repository\UserRepository;
+use App\Form\CsvImportType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +37,6 @@ class AdminPanelController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response {
         $user = new User();
-
         $form = $this->createForm(UserTypeForm::class, $user);
         $form->handleRequest($request);
 
@@ -160,10 +161,114 @@ class AdminPanelController extends AbstractController
 
 
     #[Route('/admin/user/import', name: 'admin_user_import')]
-    public function importUsers(): Response
+    public function importUsers(
+        Request                     $request,
+        EntityManagerInterface      $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
+    ): Response
     {
-        return $this->render('admin/user_form.html.twig');
+        $form = $this->createForm(CsvImportType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $csvFile = $form->get('csvFile')->getData();
+
+            if ($csvFile) {
+                $filePath = $csvFile->getPathName();
+                if (($handle = fopen($filePath, "r")) !== false) {
+                    $header = null;
+                    $createUsers = 0;
+                    $errors = [];
+                    $linenumber = 0;
+                    $createdPseudos = [];
+
+                    while (($row = fgetcsv($handle, 1000, ";")) !== false) {
+                        $linenumber++;
+
+                        if (!$header) {
+                            $header = $row;
+                            continue;
+                        }
+
+                        if (count($header) !== count($row)) {
+                            $errors[] = "Ligne $linenumber : colonnes attendues = " . count($header) . ", trouvées = " . count($row);
+                            continue;
+                        }
+
+                        $data = array_combine($header, $row);
+
+                        // Vérifie doublon pseudo dans CSV
+                        if (in_array($data['pseudo'], $createdPseudos)) {
+                            $errors[] = "Ligne $linenumber : le pseudo '{$data['pseudo']}' est déjà utilisé dans ce fichier.";
+                            continue;
+                        }
+
+                        // Vérifie si email existe déjà en base
+                        $existingMail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+                        if ($existingMail) {
+                            $errors[] = "Ligne $linenumber : l'utilisateur avec l'email : {$data['email']} existe déjà.";
+                            continue;
+                        }
+
+                        // Vérifie si pseudo existe déjà en base
+                        $existingPseudo = $entityManager->getRepository(User::class)->findOneBy(['pseudo' => $data['pseudo']]);
+                        if ($existingPseudo) {
+                            $errors[] = "Ligne $linenumber : l'utilisateur avec le pseudo : {$data['pseudo']} existe déjà.";
+                            continue;
+                        }
+
+                        // Vérifie si site existe
+                        $site = $entityManager->getRepository(Site::class)->findOneBy(['name' => $data['site']]);
+                        if (!$site) {
+                            $errors[] = "Ligne $linenumber : Le site {$data['site']} pour l'utilisateur {$data['pseudo']} n'existe pas.";
+                            continue;
+                        }
+
+                    //Création  de l'utilisateur
+                        $user = new User();
+                        $user->setPseudo($data['pseudo']);
+                        $user->setFirstname($data['firstname']);
+                        $user->setLastname($data['lastname']);
+                        $user->setEmail($data['email']);
+                        $user->setPhone($data['phone']);
+                        $user->setAdministrator(false);
+                        $user->setActive(true);
+                        $user->setSite($site);
+
+                        // Force le rôle à "ROLE_USER"
+                        $user->setRoles(['ROLE_USER']);
+
+                        // Hachage du mot de passe en clair (depuis CSV)
+                        $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+                        $user->setPassword($hashedPassword);
+
+                        //Importe picture si il existe
+                        if (isset($data['picture'])) {
+                            $user->setPicture(null);
+                        }
+
+                        $entityManager->persist($user);
+                        $createUsers++;
+                    }
+
+                    fclose($handle);
+                    $entityManager->flush();
+
+                    $this->addFlash("success", "$createUsers utilisateur(s) importé(s) avec succès.");
+                    foreach ($errors as $err) {
+                        $this->addFlash("warning", $err);
+                    }
+
+                    return $this->redirectToRoute('admin_users');
+                }
+            }
+        }
+
+        return $this->render('admin/user_import.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
+
 
     #[Route('/admin/outing/{id}/cancel', name: 'admin_outing_cancel')]
     public function cancelOutingAsAdmin(int $id): Response

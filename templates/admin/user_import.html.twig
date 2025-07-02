@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import utilisateurs{% endblock %}
+
+{% block body %}
+    <h1>Importer des utilsateurs via un fichier CSV</h1>
+
+{{ form_start(form) }}
+{{ form_row(form.csvFile) }}
+
+<button type="submit">Importer</button>
+{{ form_end(form) }}
+
+<a href="{{ path('admin_users') }}">Retour à la liste des utilisateurs</a>
+{% endblock %}

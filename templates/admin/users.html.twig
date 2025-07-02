@@ -6,6 +6,13 @@
 {% endblock %}
 {% block body %}
     <div class="container mt-4">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
         <h1>Liste des utilisateurs</h1>
 
         <table class="table table-striped">
