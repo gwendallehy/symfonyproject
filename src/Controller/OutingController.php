@@ -42,6 +42,7 @@ class OutingController extends AbstractController
             $outing->updateEtat($etatRepository);
         }
         $entityManager->flush();
+
         return $this->render('outing/list.html.twig', [
             'outings' => $outings,
             'filterForm' => $form->createView(),

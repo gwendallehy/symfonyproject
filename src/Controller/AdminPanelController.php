@@ -244,7 +244,7 @@ class AdminPanelController extends AbstractController
 
                         //Importe picture si il existe
                         if (isset($data['picture'])) {
-                            $user->setPicture(null);
+                            $user->setPicture('../images/default_profile.jpg');
                         }
 
                         $entityManager->persist($user);

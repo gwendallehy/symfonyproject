@@ -4,7 +4,15 @@
 {% endblock %}
 {% block body %}
     <h1>Liste des {{ title }}</h1>
-    <a href="{{ path('location_create', {type: type}) }}" class="btn btn-success">Créer un {{ type }}</a>
+    <a href="{{ path('location_create', {type: type}) }}" class="btn btn-success">Créer
+        {% if type == 'place' %}
+            un lieu
+        {% elseif type == 'city' %}
+            une ville
+        {% else %}
+            un {{ type }}
+        {% endif %}
+    </a>
 
     <table class="table mt-3">
         <thead>
@@ -20,7 +28,7 @@
                 <td>{{ entity.id }}</td>
                 <td>
                     {% if type == 'place' %}
-                        {{ entity.name }} - {{ entity.city.name }} ({{ entity.city.postalcode }})
+                        {{ entity.name }} : {{ entity.street }} - {{ entity.city.name }} ({{ entity.city.postalcode }})
                     {% elseif type == 'city' %}
                         {{ entity.name }} ({{ entity.postalCode }})
                     {% elseif type == 'site' %}

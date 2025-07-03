@@ -5,6 +5,18 @@
     <link rel="stylesheet" href={{ asset('css/outing.css') }}>
 {% endblock %}
 {% block body %}
+    <section class="logged">
+        <div class="flex1">
+            <p><strong>Liste des sorties</strong></p>
+        </div>
+
+        <div class="flex2">
+            <p>Date du jour : {{ "now"|date("d/m/Y") }}</p>
+            <p>Participant : {{ app.user.firstname }}  {{ app.user.lastname }}</p>
+        </div>
+    </section>
+
+
     <section class="filters">
         {{ form_start(filterForm) }}
         <div class="filter-left">
