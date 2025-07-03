@@ -1,24 +1,37 @@
 {% extends 'base.html.twig' %}
+
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/locations.css') }}">
 {% endblock %}
+
 {% block title %}Formulaire{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('js/address-autocomplete.js') }}" defer></script>
+    <script src="{{ asset('js/city-form-toggle.js') }}" defer></script>
+{% endblock %}
+
 {% block body %}
     <h2>{{ type|capitalize }} - {{ editMode is defined and editMode ? 'Édition' : 'Création' }}</h2>
 
     {{ form_start(form) }}
 
     {{ form_row(form.name) }}
-    {{ form_row(form.street) }}
+    {{ form_row(form.street, {
+        'attr': {
+            'placeholder': 'Tapez une rue'
+        }})
+    }}
     {{ form_row(form.city) }}
     {{ form_row(form.latitude) }}
-    {{ form_row(form.longitude) }}
+    {{ form_row(form.longitude ) }}
     <button type="submit" class="btn btn-success mt-3">
         {{ editMode is defined and editMode ? 'Mettre à jour' : 'Créer' }}
     </button>
     {{ form_end(form) }}
 
-    
+
     {% if type == 'place' %}
         <hr>
         <button type="button" id="toggle-city-form" class="btn btn-outline-secondary">
