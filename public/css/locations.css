@@ -106,3 +106,25 @@ form button {
     background-color: #f8d7da;
     color: #721c24;
 }
+
+.address-dropdown {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+}
+
+.address-dropdown li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.address-dropdown li:hover {
+    background-color: #f0f0f0;
+}

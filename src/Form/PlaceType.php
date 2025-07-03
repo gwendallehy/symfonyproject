@@ -21,7 +21,12 @@ class PlaceType extends AbstractType
             ])
             ->add('street', TextType::class, [
                 'label' => 'Rue',
+                'attr' => [
+                    'id' => 'address-input',
+                    'placeholder' => 'Tapez une rue' // optionnel, utile pour l’autocomplétion
+                ],
             ])
+
             ->add('city', EntityType::class, [
                 'class' => City::class,
                 'choice_label' => 'name',
@@ -29,8 +34,14 @@ class PlaceType extends AbstractType
                 'placeholder' => 'Choisir une ville',
                 'attr' => ['class' => 'city-selector']
             ])
-            ->add('latitude', TextType::class)
-            ->add('longitude', TextType::class);
+
+            ->add('latitude', TextType::class, [
+                'attr' => ['id' => 'latitude-input']
+            ])
+
+            ->add('longitude', TextType::class, [
+                'attr' => ['id' => 'longitude-input']
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
