@@ -126,6 +126,8 @@ class LocationController extends AbstractController
             case 'place':
                 $entity = $em->getRepository(Place::class)->find($id);
                 $form = $this->createForm(PlaceType::class, $entity);
+                // 👇 On prépare le formulaire de ville uniquement pour les lieux
+                $cityForm = $this->createForm(CityForm::class, new City());
                 break;
             case 'site':
                 $entity = $em->getRepository(Site::class)->find($id);
@@ -155,6 +157,7 @@ class LocationController extends AbstractController
             'form' => $form->createView(),
             'type' => $type,
             'editMode' => true,
+            'cityForm' => isset($cityForm) ? $cityForm->createView() : null,
         ]);
     }
     #[Route('/admin/location/{type}/{id}/delete', name: 'admin_location_delete')]

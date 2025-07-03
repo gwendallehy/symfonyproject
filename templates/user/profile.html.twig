@@ -1,29 +1,33 @@
-{# templates/user/profile.html.twig #}
-
 {% extends 'base.html.twig' %}
+
 {% block stylesheets %}
-    <link rel="stylesheet" href={{ asset('css/profile.css') }}>
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 {% endblock %}
+
 {% block title %}Profil de {{ userProfile.pseudo }}{% endblock %}
 
 {% block body %}
-<div class="profile-container">
-    <h1>Profil de {{ userProfile.pseudo }}</h1>
-    {% if userProfile.picture %}
-        <img src="{{ asset(userProfile.picture) }}" alt="Photo de {{ userProfile.pseudo }}" style="max-width:200px; max-height:200px;" />
-    {% else %}
-        <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar par défaut" style="max-width:200px; max-height:200px;" />
-    {% endif %}
+    <div class="profile-container">
+        <h1 class="profile-name">Profil de {{ userProfile.pseudo }}</h1>
+        <div class="profile-main">
+            <div class="profile-avatar">
+                {% if userProfile.picture %}
+                    <img src="{{ asset(userProfile.picture) }}" alt="Photo de {{ userProfile.pseudo }}" class="profile-image" />
+                {% else %}
+                    <img src="{{ asset('images/default_profile.jpg') }}" alt="Avatar par défaut" class="profile-image" />
+                {% endif %}
+            </div>
+            <div class="profile-info">
+                <p><strong>Pseudo :</strong> {{ userProfile.pseudo }}</p>
+                <p><strong>Email :</strong> {{ userProfile.email }}</p>
+                <p><strong>Prénom :</strong> {{ userProfile.firstname }}</p>
+                <p><strong>Nom :</strong> {{ userProfile.lastname }}</p>
+                <p><strong>Téléphone :</strong> {{ userProfile.phone }}</p>
+            </div>
+        </div>
 
-    <div class="profile-info">
-        <p><strong>Pseudo :</strong> {{ userProfile.pseudo }}</p>
-        <p><strong>Email :</strong> {{ userProfile.email }}</p>
-        <p><strong>Prénom :</strong> {{ userProfile.firstname }}</p>
-        <p><strong>Nom :</strong> {{ userProfile.lastname }}</p>
-        <p><strong>Téléphone :</strong> {{ userProfile.phone }}</p>
+        {% if app.user and app.user.id == userProfile.id %}
+            <a href="{{ path('app_user_profile_edit') }}" class="btn-primary">Modifier mon profil</a>
+        {% endif %}
     </div>
-
-    {% if app.user and app.user.id == userProfile.id %}
-        <a href="{{ path('app_user_profile_edit') }}" class="btn btn-primary">Modifier mon profil</a>
-    {% endif %}
 {% endblock %}

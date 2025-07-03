@@ -13,11 +13,12 @@
 {% endblock %}
 
 {% block body %}
-    <h2>{{ type|capitalize }} - {{ editMode is defined and editMode ? 'Édition' : 'Création' }}</h2>
+    <h2>Formulaire {{ editMode is defined and editMode ? 'd\'Édition' : 'de Création' }}</h2>
 
     {{ form_start(form) }}
-
-    {{ form_row(form.name) }}
+    
+    {% if type == 'place' %}
+        {{ form_row(form.name) }}
     {{ form_row(form.street, {
         'attr': {
             'placeholder': 'Tapez une rue'
@@ -26,13 +27,23 @@
     {{ form_row(form.city) }}
     {{ form_row(form.latitude) }}
     {{ form_row(form.longitude ) }}
+    {% elseif type == 'city' %}
+        {{ form_row(form.name) }}
+        {{ form_row(form.postalCode) }}
+    {% elseif type == 'site' %}
+        {{ form_row(form.name) }}
+        {# Ajoute les champs spécifiques site ici #}
+    {% else %}
+        {{ form_widget(form) }}
+    {% endif %}
+
     <button type="submit" class="btn btn-success mt-3">
         {{ editMode is defined and editMode ? 'Mettre à jour' : 'Créer' }}
     </button>
     {{ form_end(form) }}
 
 
-    {% if type == 'place' %}
+    {% if type == 'place' and cityForm is not null %}
         <hr>
         <button type="button" id="toggle-city-form" class="btn btn-outline-secondary">
         Ville non existante ?
@@ -46,7 +57,7 @@
             <button type="submit" class="btn btn-sm btn-primary">Ajouter la ville</button>
             {{ form_end(cityForm) }}
         </div>
-    {% endif %}
+
 
     <script>
         document.getElementById('toggle-city-form').addEventListener('click', function () {
@@ -93,4 +104,5 @@
         });
 
     </script>
+    {% endif %}
 {% endblock %}
