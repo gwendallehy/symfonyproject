@@ -16,7 +16,7 @@
     <h2>Formulaire {{ editMode is defined and editMode ? 'd\'Édition' : 'de Création' }}</h2>
 
     {{ form_start(form) }}
-    
+
     {% if type == 'place' %}
         {{ form_row(form.name) }}
     {{ form_row(form.street, {
@@ -32,7 +32,6 @@
         {{ form_row(form.postalCode) }}
     {% elseif type == 'site' %}
         {{ form_row(form.name) }}
-        {# Ajoute les champs spécifiques site ici #}
     {% else %}
         {{ form_widget(form) }}
     {% endif %}
@@ -41,68 +40,4 @@
         {{ editMode is defined and editMode ? 'Mettre à jour' : 'Créer' }}
     </button>
     {{ form_end(form) }}
-
-
-    {% if type == 'place' and cityForm is not null %}
-        <hr>
-        <button type="button" id="toggle-city-form" class="btn btn-outline-secondary">
-        Ville non existante ?
-        </button>
-
-        <div id="city-form-container" style="display:none; margin-top:20px;">
-            <h4>Ajouter une nouvelle ville</h4>
-            {{ form_start(cityForm, {'attr': {'id': 'city-embedded-form'}}) }}
-            {{ form_row(cityForm.name) }}
-            {{ form_row(cityForm.postalCode) }}
-            <button type="submit" class="btn btn-sm btn-primary">Ajouter la ville</button>
-            {{ form_end(cityForm) }}
-        </div>
-
-
-    <script>
-        document.getElementById('toggle-city-form').addEventListener('click', function () {
-            const container = document.getElementById('city-form-container');
-            container.style.display = container.style.display === 'none' ? 'block' : 'none';
-        });
-
-        document.getElementById('city-embedded-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const form = e.target;
-            const data = new FormData(form);
-
-            fetch('{{ path('location_city_create_ajax') }}', {
-                method: 'POST',
-                body: data,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-            })
-                .then(response => {
-                    if (!response.ok) return response.json().then(err => Promise.reject(err));
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        const select = document.querySelector('select[name$="[city]"]');
-                        const option = document.createElement('option');
-                        option.value = data.city.id;
-                        option.textContent = data.city.name;
-                        option.selected = true;
-                        select.appendChild(option);
-
-                        document.getElementById('city-form-container').style.display = 'none';
-                        form.reset();
-                    } else {
-                        alert('Erreur : ' + (data.errors || []).join(', '));
-                    }
-                })
-                .catch(err => {
-                    alert('Erreur lors de l\'ajout de la ville');
-                    console.error(err);
-                });
-        });
-
-    </script>
-    {% endif %}
 {% endblock %}

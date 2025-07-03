@@ -84,8 +84,9 @@ class LocationController extends AbstractController
             case 'place':
                 $entity = new Place();
                 $form = $this->createForm(PlaceType::class, $entity);
-                // 👇 On prépare le formulaire de ville uniquement pour les lieux
                 $cityForm = $this->createForm(CityForm::class, new City());
+
+
                 break;
             case 'site':
                 $entity = new Site();
@@ -102,6 +103,14 @@ class LocationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $cityId = $request->request->get('place')['cityId'] ?? null;
+            if ($cityId) {
+                $city = $em->getRepository(City::class)->find($cityId);
+                if ($city) {
+                    $entity->setCity($city);
+                }
+            }
             $em->persist($entity);
             $em->flush();
 

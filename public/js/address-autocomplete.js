@@ -1,10 +1,12 @@
 (() => {
     const input = document.getElementById('place_street');
+    const cityTextInput = document.getElementById('place_cityName');
+    const cityHiddenIdInput = document.getElementById('place_cityId');
     const latInput = document.getElementById('place_latitude');
     const lonInput = document.getElementById('place_longitude');
 
-    if (!input || !latInput || !lonInput) {
-        return; // OK ici, car dans une fonction
+    if (!input || !cityTextInput || !cityHiddenIdInput || !latInput || !lonInput) {
+        return;
     }
 
     const dropdown = document.createElement('ul');
@@ -26,17 +28,38 @@
             fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Données API :', data);
                     dropdown.innerHTML = '';
                     data.features.forEach(feature => {
                         const li = document.createElement('li');
                         li.textContent = feature.properties.label;
+
                         li.addEventListener('mousedown', () => {
                             input.value = feature.properties.name;
                             latInput.value = feature.geometry.coordinates[1];
                             lonInput.value = feature.geometry.coordinates[0];
+
+                            const cityName = feature.properties.city;
+                            const postalCode = feature.properties.postcode;
+
+                            fetch('/api/city', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    name: cityName,
+                                    postalCode: postalCode
+                                })
+                            })
+                                .then(res => res.json())
+                                .then(city => {
+                                    cityTextInput.value = `${city.name} (${city.postalCode})`;
+                                    cityHiddenIdInput.value = city.id;
+                                });
+
                             dropdown.innerHTML = '';
                         });
+
                         dropdown.appendChild(li);
                     });
                 });
@@ -46,7 +69,6 @@
     document.addEventListener('click', function (e) {
         if (!dropdown.contains(e.target) && e.target !== input) {
             dropdown.innerHTML = '';
-
         }
     });
 })();

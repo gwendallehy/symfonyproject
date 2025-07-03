@@ -7,6 +7,7 @@ use App\Entity\Place;
 use App\Entity\City;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,20 +28,22 @@ class PlaceType extends AbstractType
                 ],
             ])
 
-            ->add('city', EntityType::class, [
-                'class' => City::class,
-                'choice_label' => 'name',
+            ->add('cityName', TextType::class, [
+                'mapped' => false,
                 'label' => 'Ville',
-                'placeholder' => 'Choisir une ville',
-                'attr' => ['class' => 'city-selector']
+                'attr' => ['id' => 'place_cityName', 'autocomplete' => 'off']
             ])
+            ->add('cityId', HiddenType::class, [
+                'mapped' => false,
+                'attr' => ['id' => 'place_cityId']
+            ])
+
 
             ->add('latitude', TextType::class, [
-                'attr' => ['id' => 'latitude-input']
+                'attr' => ['id' => 'latitude-input', 'readonly' => true],
             ])
-
             ->add('longitude', TextType::class, [
-                'attr' => ['id' => 'longitude-input']
+                'attr' => ['id' => 'longitude-input', 'readonly' => true],
             ]);
     }
 
