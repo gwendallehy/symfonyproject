@@ -495,3 +495,156 @@ button.create-outing:hover a{
         width: 100%;
     }
 }
+
+/* Style général des messages d'erreur Symfony */
+ul li {
+    color: #dc3545; /* Rouge Bootstrap */
+    font-size: 0.9rem;
+    margin-top: 4px;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Cible plus précisément les erreurs générées par Symfony (évite de tout toucher) */
+form ul {
+    padding-left: 0;
+    margin-bottom: 0.5rem;
+}
+
+form ul li {
+    color: #dc3545;
+    font-weight: 500;
+}
+.auto-filter-message {
+    background-color: #e6f7f4;
+    color: #055;
+    padding: 15px;
+    border-left: 4px solid #17a2b8;
+    margin: 20px 50px;
+    font-weight: 500;
+    border-radius: 5px;
+}
+/* Responsive - Mobile Phones (max-width: 576px) */
+@media (max-width: 576px) {
+    header {
+        padding: 15px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header img {
+        width: 120px;
+        margin-bottom: 10px;
+    }
+
+    .header-container,
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+    }
+
+    nav a {
+        margin: 5px 0;
+        font-size: 1rem;
+    }
+
+    main {
+        margin: 15px 15px;
+        padding: 20px;
+    }
+
+    form {
+        flex-direction: column;
+        margin: 15px;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .form-left, .filter-left,
+    .form-right, .filter-right {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .form-left > *, .filter-left > *,
+    .form-right .checkbox-row, .filter-right > * {
+        min-width: 100%;
+        flex: 1 1 100%;
+        margin-bottom: 12px;
+    }
+
+    .form-right button[type="submit"], .filter-right button {
+        width: 100%;
+    }
+
+    .admin-note, .auto-filter-message {
+        margin: 15px;
+    }
+
+    .outings-list {
+        margin: 0 15px 40px;
+        overflow-x: auto;
+    }
+
+    .outings-list table {
+        width: 600px; /* Horizontal scroll on small screens */
+    }
+
+    .outing-detail,
+    .outing-form-container {
+        margin: 15px;
+        padding: 15px;
+    }
+
+    .outing-form-container .btn,
+    .outing-detail .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .logged {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .flex1, .flex2 {
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .flex1 {
+        font-size: 1.5rem;
+    }
+
+    .flex1 p {
+        font-size: 1rem;
+    }
+
+    .create-outing {
+        width: 100%;
+        height: auto;
+        padding: 12px;
+    }
+
+    .outing {
+        padding: 15px;
+    }
+
+    .dropdown-content {
+        left: 0;
+        right: auto;
+        min-width: 100%;
+    }
+    .outings-list::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .outings-list::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 123, 255, 0.4);
+        border-radius: 4px;
+    }
+
+}

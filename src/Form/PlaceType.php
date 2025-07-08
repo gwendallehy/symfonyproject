@@ -33,6 +33,7 @@ class PlaceType extends AbstractType
                 'label' => 'Ville',
                 'attr' => ['id' => 'place_cityName', 'autocomplete' => 'off']
             ])
+
             ->add('cityId', HiddenType::class, [
                 'mapped' => false,
                 'attr' => ['id' => 'place_cityId']

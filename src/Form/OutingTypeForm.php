@@ -41,7 +41,7 @@ class OutingTypeForm extends AbstractType
             ->add('place', EntityType::class, [
                 'class' => Place::class,
                 'choice_label' => 'name',
-                'label' => 'Choisissez un lieu'
+                'label' => 'Commencez par choisir le lieu, si il n\'existe pas vous pouvez le créer.'
             ])
             ->add('site', EntityType::class, [
                 'class' => Site::class,

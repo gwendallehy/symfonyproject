@@ -35,6 +35,7 @@ class UserController extends AbstractController
      * US 1001 (suite) - Se déconnecter
      * En tant que participant, je peux me déconnecter de mon compte.
      */
+
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
@@ -45,6 +46,7 @@ class UserController extends AbstractController
      * US 2008 - Afficher le profil d’un autre participant
      * En tant que participant, je peux consulter le profil public d’un autre utilisateur depuis la fiche sortie.
      */
+
     #[Route('/profile/{id}', name: 'app_user_profile', requirements: ['id' => '\d+'])]
     public function profile(int $id, UserRepository $userRepository): Response
     {
@@ -79,12 +81,12 @@ class UserController extends AbstractController
     {
         /** @var User $user */
         $user = $security->getUser();
-
+        $originpicture = $user->getPicture();
+        $user->setPicture(null);
         $form = $this->createForm(UserTypeForm::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification mot de passe + confirmation
             $password = $form->get('password')->getData();
             $confirmation = $form->get('confirmation')->getData();
 
@@ -101,7 +103,10 @@ class UserController extends AbstractController
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
                 $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $safeFilename = transliterator_transliterate(
+                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                    $originalFilename
+                );
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
 
                 try {
@@ -111,8 +116,10 @@ class UserController extends AbstractController
                     );
                     $user->setPicture('pictures/' . $newFilename);
                 } catch (FileException $e) {
-                    $this->addFlash('danger', "Erreur lors de l'upload de la photo");
+                    $this->addFlash('danger', "Erreur lors de l'upload de la photo.");
                 }
+            }else{
+                $user->setPicture($originpicture);
             }
 
             // Vérification du pseudo unique
@@ -135,6 +142,7 @@ class UserController extends AbstractController
         return $this->render('user/edit_profile.html.twig', [
             'userForm' => $form->createView(),
             'userProfile' => $user,
+            'originPicture' => $originpicture,
         ]);
     }
 

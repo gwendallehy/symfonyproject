@@ -8,8 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use function Symfony\Component\Clock\now;
 
 #[ORM\Entity(repositoryClass: OutgoingRepository::class)]
+#[Assert\Callback('validateDates')]
+
 class Outgoing
 {
     #[ORM\Id]
@@ -17,27 +22,39 @@ class Outgoing
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Le nom de la sortie est obligatoire.")]
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100)]
     private ?string $name = null;
-
+    #[Assert\NotNull]
+    #[Assert\NotBlank(message: "La date de début est obligatoire.")]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateBegin = null;
-
+    #[Assert\NotNull]
+    #[Assert\NotBlank(message: "La date limite d'inscription est obligatoire.")]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateSubscriptionLimit = null;
 
+    #[Assert\NotNull(message: "La durée est obligatoire.")]
+    #[Assert\Positive(message: "La durée doit être un entier positif.")]
     #[ORM\Column(type: 'integer')]
     private ?int $duration = null;
 
+    #[Assert\NotNull(message: "Le nombre max d'inscriptions est obligatoire.")]
+    #[Assert\Positive(message: "Le nombre max d'inscriptions doit être un entier positif.")]
     #[ORM\Column]
     private ?int $nbSubscriptionMax = null;
 
+    #[Assert\Length(max: 1000)]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
     #[ORM\ManyToOne]
     private ?Etat $etat = null;
 
+    #[Assert\NotNull(message: "L'organisateur doit être défini.")]
     #[ORM\ManyToOne(inversedBy: 'organizedOutings')]
     private ?User $organizer = null;
 
@@ -223,6 +240,11 @@ class Outgoing
         return false;
     }
 
+    /**
+     * US 2007 - Gestion des états & Archiver les sorties.
+     * Les sorties passées d’un mois ne sont plus consultables.
+     */
+
     public function updateEtat(EtatRepository $etatRepository): void
     {
         $now = new \DateTime();
@@ -259,8 +281,31 @@ class Outgoing
             $this->setEtat($etat);
             return;
         }
+
+        if ($this->getDateBegin() < (clone $now)->modify('-1 month')) {
+            $etat = $etatRepository->findOneBy(['libelle' => 'Archivée']);
+            $this->setEtat($etat);
+        }
+
     }
 
+    public static function validateDates(self $object, ExecutionContextInterface $context): void
+    {
+        $start = $object->getDateBegin();
+        $limit = $object->getDateSubscriptionLimit();
+        $now = new \DateTime();
+
+        if ($start && $limit && $limit >= $start) {
+            $context->buildViolation("La date limite d'inscription doit être antérieure à la date de début.")
+                ->atPath('dateSubscriptionLimit') // pour l'afficher sous ce champ
+                ->addViolation();
+        }
+        if ($start && $limit && ($start < $now || $limit < $now)) {
+            $context->buildViolation("Les dates doivent être dans le futur.")
+                ->atPath('dateBegin') // ou choisis 'dateSubscriptionLimit' si tu préfères
+                ->addViolation();
+        }
+    }
 
     public function hasStarted(): bool
     {

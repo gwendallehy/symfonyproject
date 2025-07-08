@@ -6,10 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['pseudo'], message: 'Ce pseudo est déjà utilisé.')]
+#[UniqueEntity(fields: ['email'], message: 'Cette adresse e-mail est déjà utilisée.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -17,24 +21,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Le pseudo est obligatoire.")]
+    #[Assert\Length(
+        min: 3,
+        max: 180,
+        minMessage: "Le pseudo doit faire au moins {{ limit }} caractères.",
+        maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
+    )]
     #[ORM\Column(length: 180, unique: true)]
     private string $pseudo;
 
     #[ORM\Column]
     private array $roles = [];
 
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
+    #[Assert\Length(min: 6)]
     #[ORM\Column]
     private string $password;
 
+    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100)]
     private string $firstname;
 
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100)]
     private string $lastname;
 
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     #[ORM\Column(length: 100)]
     private string $email;
 
+    #[Assert\NotBlank(message: "Le téléphone est obligatoire.")]
+    #[Assert\Length(max: 20)]
+    #[Assert\Regex(
+        pattern: "/^\+?[0-9\s\-]+$/",
+        message: "Le numéro de téléphone '{{ value }}' n'est pas valide."
+    )]
     #[ORM\Column(length: 20)]
     private string $phone;
 
@@ -44,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $active;
 
+    #[Assert\Url(message: "L'URL de la photo '{{ value }}' n'est pas valide.")]
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $picture = null;
 

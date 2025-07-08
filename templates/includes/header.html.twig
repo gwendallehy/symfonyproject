@@ -3,27 +3,34 @@
     <nav>
 
         {% if app.user %}
+            {% if not isMobile %}
             <div class="header-container">
-
-                {# Liens visibles à tous les utilisateurs connectés #}
-                <a href="{{ path('location_list', {'type': 'place'}) }}">Lieux</a>
-                <a href="{{ path('location_list', {'type': 'city'}) }}">Villes</a>
-
-
                 {% if app.user.administrator %}
-                    <a href="{{ path('location_list', {'type': 'site'}) }}">Sites</a>
-                    <a href="{{ path('admin_users') }}">Gestion des utilisateurs</a>
+
+                    <div class="dropdown">
+                        <button class="dropbtn">Administration</button>
+                        <div class="dropdown-content">
+                            <a href="{{ path('admin_users') }}">Gestion des utilisateurs</a>
+                            <a href="{{ path('location_list', {'type': 'site'}) }}">Sites</a>
+                            <a href="{{ path('location_list', {'type': 'city'}) }}">Villes</a>
+                            <a href="{{ path('location_list', {'type': 'place'}) }}">Lieux</a>
+                        </div>
+                    </div>
+
                 {% endif %}
 
                 <a href="{{ path('app_outing_list') }}">Sorties</a>
                 <a href="{{ path('app_user_profile', {'id': app.user.id}) }}">Profil</a>
+            {% endif %}
                 <a href="{{ path('app_logout') }}">Déconnexion</a>
             </div>
+
         {% else %}
             <div class="header-container">
                 <a href="{{ path('app_login') }}">Connexion</a>
             </div>
         {% endif %}
+
 
     </nav>
 </header>

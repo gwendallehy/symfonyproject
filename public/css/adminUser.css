@@ -124,6 +124,34 @@ td form {
 td a {
     text-decoration: none;
 }
+
+ul li {
+    color: #dc3545; /* Rouge Bootstrap */
+    font-size: 0.9rem;
+    margin-top: 4px;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Cible plus précisément les erreurs générées par Symfony (évite de tout toucher) */
+form ul {
+    padding-left: 0;
+    margin-bottom: 0.5rem;
+}
+
+form ul li {
+    color: #dc3545;
+    font-weight: 500;
+}
+.auto-filter-message {
+    background-color: #e6f7f4;
+    color: #055;
+    padding: 15px;
+    border-left: 4px solid #17a2b8;
+    margin: 20px 50px;
+    font-weight: 500;
+    border-radius: 5px;
+}
 /* Responsive ajustement */
 @media (max-width: 768px) {
     .row {

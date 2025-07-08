@@ -46,9 +46,10 @@ class UserTypeForm extends AbstractType
                 'placeholder' => 'Sélectionner un site'
             ])
             ->add('picture', FileType::class, [
-                'label' => 'Ma photo',
-                'mapped' => false,
+                'label' => 'Importer une nouvelle photo',
                 'required' => false,
+                'mapped' => false,
+                'attr' => ['accept' => 'image/*'],
             ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Outgoing;
+use App\Entity\Place;
 use App\Form\OutingFilterTypeForm;
 use App\Form\OutingTypeForm;
 use App\Repository\EtatRepository;
@@ -11,10 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\SecurityBundle\Security;
-
+use Symfony\Component\HttpFoundation\RequestStack;
 class OutingController extends AbstractController
 {
     /**
@@ -23,19 +25,44 @@ class OutingController extends AbstractController
      * celles auxquelles je suis inscrit et celles dont je suis l’organisateur.
      * Je peux filtrer cette liste suivant différents critères.
      */
+    private RequestStack $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     #[Route('/', name: 'app_outing_list')]
     public function list(
         Security $security,
         OutgoingRepository $outgoingRepository,
         Request $request,
         EtatRepository $etatRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ): Response {
         $user = $security->getUser();
+        $formOptions = [];
 
-        $form = $this->createForm(OutingFilterTypeForm::class);
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            $isMobile = false;
+        } else {
+            $ua = $request->headers->get('User-Agent', '');
+            $isMobile = preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $ua) === 1;
+        }
+
+        if ($isMobile) {
+            $formOptions['data'] = [
+                'subscribed' => true,
+            ];
+            $isMobile = true;
+        } else {
+            $isMobile = false;
+        }
+
+        $form = $this->createForm(OutingFilterTypeForm::class, null, $formOptions);
         $form->handleRequest($request);
-        $filters = $form->getData();
+        $filters = $isMobile ? ['site' => $user->getSite()] : $form->getData();
 
         $outings = $outgoingRepository->findFilteredOutings($user, $filters ?? []);
         foreach ($outings as $outing) {
@@ -47,6 +74,7 @@ class OutingController extends AbstractController
             'outings' => $outings,
             'filterForm' => $form->createView(),
             'user' => $user,
+            'isMobile' => $isMobile,
         ]);
     }
 
@@ -59,10 +87,9 @@ class OutingController extends AbstractController
         Security $security,
         Request $request,
         EntityManagerInterface $entityManager,
-        EtatRepository $etatRepository
+        EtatRepository $etatRepository,
+        SessionInterface $session
     ): Response {
-
-
 
         $user = $security->getUser();
 
@@ -70,18 +97,36 @@ class OutingController extends AbstractController
         $outing->setOrganizer($user);
         $outing->setSite($user->getSite());
 
+
+        $newPlaceId = $session->get('new_place_id');
+        if ($newPlaceId) {
+            $newPlace = $entityManager->getRepository(Place::class)->find($newPlaceId);
+            if ($newPlace) {
+                $outing->setPlace($newPlace);
+            }
+            $session->remove('new_place_id');
+        }
+
+
         $form = $this->createForm(OutingTypeForm::class, $outing);
+        // 🟡 Intercepter le clic sur "Ajouter un lieu" AVANT validation du formulaire
+        if ($request->isMethod('POST') && $request->request->has('add_place')) {
+            return $this->redirectToRoute('location_create', [
+                'type' => 'place',
+                'returnUrl' => $request->getUri(),
+            ]);
+        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $etat = $etatRepository->findOneBy(['libelle' => 'Créée']);
             $outing->setEtat($etat);
+
             $entityManager->persist($outing);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_outing_list');
         }
-
         return $this->render('outing/form.html.twig', [
             'outingForm' => $form->createView(),
         ]);
@@ -190,10 +235,7 @@ class OutingController extends AbstractController
         ]);
     }
 
-    /**
-     * US 2007 - Archiver les sorties
-     * Les sorties passées d’un mois ne sont plus consultables.
-     */
+
     #[Route('/outings/archive', name: 'app_outing_archive')]
     public function archive(OutgoingRepository $outgoingRepository): Response
     {
