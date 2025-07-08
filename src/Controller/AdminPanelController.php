@@ -105,6 +105,12 @@ class AdminPanelController extends AbstractController
     #[Route('/admin/user/{id}/delete', name: 'admin_user_delete', methods: ['POST', 'GET'])]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
     {
+        // Désinscription de toutes les sorties auxquelles il participe
+        foreach ($user->getOutings() as $outing) {
+            $outing->removeParticipant($user);
+        }
+
+
         $entityManager->remove($user);
         $entityManager->flush();
 

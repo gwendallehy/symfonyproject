@@ -76,7 +76,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Site $site = null;
 
-    #[ORM\OneToMany(targetEntity: Outgoing::class, mappedBy: 'organizer')]
+    #[ORM\OneToMany(
+        targetEntity: Outgoing::class,
+        mappedBy: 'organizer',
+        cascade: ['remove'],
+        orphanRemoval: true
+    )]
     private Collection $organizedOutings;
 
     #[ORM\ManyToMany(targetEntity: Outgoing::class, mappedBy: 'participants')]
