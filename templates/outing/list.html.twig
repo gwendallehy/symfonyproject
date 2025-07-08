@@ -7,33 +7,45 @@
 {% block body %}
     <section class="logged">
         <div class="flex1">
+            {% if isMobile %}
+                <p><strong>Mes sorties</strong></p>
+            {% endif %}
+            {% if not isMobile %}
             <p><strong>Liste des sorties</strong></p>
+            {% endif %}
         </div>
-
+        {% if not isMobile %}
         <div class="flex2">
             <p>Date du jour : {{ "now"|date("d/m/Y") }}</p>
             <p>Participant : {{ app.user.firstname }}  {{ app.user.lastname }}</p>
         </div>
+        {% endif %}
     </section>
 
 
-    <section class="filters">
-        {{ form_start(filterForm) }}
-        <div class="filter-left">
-            {{ form_row(filterForm.site) }}
-            {{ form_row(filterForm.search) }}
-            {{ form_row(filterForm.dateStart) }}
-            {{ form_row(filterForm.dateEnd) }}
-        </div>
-        <div class="filter-right">
-            {{ form_row(filterForm.organizer) }}
-            {{ form_row(filterForm.subscribed) }}
-            {{ form_row(filterForm.notSubscribed) }}
-            {{ form_row(filterForm.past) }}
-            <button type="submit">Rechercher</button>
-        </div>
-        {{ form_end(filterForm) }}
-    </section>
+    {% if not isMobile %}
+        <section class="filters">
+            {{ form_start(filterForm) }}
+            <div class="filter-left">
+                {{ form_row(filterForm.site) }}
+                {{ form_row(filterForm.search) }}
+                {{ form_row(filterForm.dateStart) }}
+                {{ form_row(filterForm.dateEnd) }}
+            </div>
+            <div class="filter-right">
+                {{ form_row(filterForm.organizer) }}
+                {{ form_row(filterForm.subscribed) }}
+                {{ form_row(filterForm.notSubscribed) }}
+                {{ form_row(filterForm.past) }}
+                <button type="submit">Rechercher</button>
+            </div>
+            {{ form_end(filterForm) }}
+        </section>
+    {% else %}
+        <p class="auto-filter-message">
+            Les filtres sont désactivés sur mobile. Les sorties sont automatiquement filtrées en fonction de vos inscriptions.
+        </p>
+    {% endif %}
 
     <section class="outings-list">
         <table>
@@ -41,19 +53,33 @@
             <tr>
                 <th>Nom de la sortie</th>
                 <th>Date de la sortie</th>
+                {% if isMobile %}
+                    <th>Lieu</th>
+                {% endif %}
+                {% if not isMobile %}
                 <th>Clôture</th>
                 <th>Inscrits / places</th>
                 <th>État</th>
                 <th>Inscrit</th>
                 <th>Organisateur</th>
                 <th>Actions</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
             {% for outing in outings %}
                 <tr>
-                    <td>{{ outing.name }}</td>
+                    {% if isMobile %}
+                        <td><a href="{{ path('app_outing_show', {'id': outing.id}) }}">{{ outing.name }}</a></td>
+                    {% endif %}
+                    {% if not isMobile %}
+                        <td>{{ outing.name }}</td>
+                    {% endif %}
                     <td>{{ outing.dateBegin|date('d/m/Y H:i') }}</td>
+                    {% if isMobile %}
+                        <td>{{ outing.place.city.name }}</td>
+                    {% endif %}
+                    {% if not isMobile %}
                     <td>{{ outing.dateSubscriptionLimit|date('d/m/Y') }}</td>
                     <td>{{ outing.participants|length }}/{{ outing.nbSubscriptionMax }}</td>
                     <td>{{ outing.etat.libelle }}</td>
@@ -76,16 +102,20 @@
                         {% else %}
                             <span>Connectez-vous pour gérer votre inscription</span>
                         {% endif %}
+
                     </td>
+                    {% endif %}
                 </tr>
             {% else %}
                 <tr><td colspan="8">Aucune sortie trouvée.</td></tr>
             {% endfor %}
             </tbody>
         </table>
+        {% if not isMobile %}
         <button class="create-outing"><a href="{{ path('app_outing_create') }}" class="create-outing btn btn-primary">
                 Créer une sortie
             </a></button>
+        {% endif %}
     </section>
 
 {% endblock %}

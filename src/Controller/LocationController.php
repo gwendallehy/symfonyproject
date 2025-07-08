@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -78,15 +79,15 @@ class LocationController extends AbstractController
     }
 
     #[Route('/location/{type}/create', name: 'location_create')]
-    public function createEntity(string $type, Request $request, EntityManagerInterface $em): Response
+    public function createEntity(string $type, Request $request, EntityManagerInterface $em, SessionInterface $session): Response
     {
+        $returnUrl = $request->query->get('returnUrl');
+
         switch ($type) {
             case 'place':
                 $entity = new Place();
                 $form = $this->createForm(PlaceType::class, $entity);
                 $cityForm = $this->createForm(CityForm::class, new City());
-
-
                 break;
             case 'site':
                 $entity = new Site();
@@ -99,22 +100,36 @@ class LocationController extends AbstractController
             default:
                 throw $this->createNotFoundException("Type inconnu.");
         }
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $cityId = $request->request->get('place')['cityId'] ?? null;
-            if ($cityId) {
-                $city = $em->getRepository(City::class)->find($cityId);
-                if ($city) {
-                    $entity->setCity($city);
+            if ($type === 'place') {
+                $formData = $request->request->all()['place'] ?? null;
+                $cityId = $formData['cityId'] ?? null;
+                if ($cityId) {
+                    $city = $em->getRepository(City::class)->find((int)$cityId);
+                    if ($city) {
+                        $form->getData()->setCity($city);
+                    }
                 }
             }
+
+            $entity = $form->getData();
+
             $em->persist($entity);
             $em->flush();
 
+            if ($type === 'place') {
+                $session->set('new_place_id', $entity->getId());
+                return $this->redirectToRoute('app_outing_create');
+            }
+
             $this->addFlash('success', ucfirst($type) . ' créé avec succès.');
+
+            if ($returnUrl) {
+                return $this->redirect($returnUrl);
+            }
+
             return $this->redirectToRoute('location_list', ['type' => $type]);
         }
 
@@ -122,6 +137,7 @@ class LocationController extends AbstractController
             'form' => $form->createView(),
             'type' => $type,
             'cityForm' => isset($cityForm) ? $cityForm->createView() : null,
+            'returnUrl' => $returnUrl,
         ]);
     }
     #[Route('/admin/location/{type}/{id}/edit', name: 'admin_location_edit')]
@@ -135,7 +151,7 @@ class LocationController extends AbstractController
             case 'place':
                 $entity = $em->getRepository(Place::class)->find($id);
                 $form = $this->createForm(PlaceType::class, $entity);
-                // 👇 On prépare le formulaire de ville uniquement pour les lieux
+                // Formulaire de ville pour ajouter une ville à un lieu
                 $cityForm = $this->createForm(CityForm::class, new City());
                 break;
             case 'site':
@@ -156,10 +172,24 @@ class LocationController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', ucfirst($type).' modifié avec succès.');
-            return $this->redirectToRoute('location_list', ['type' => $type]);
+        if ($form->isSubmitted()) {
+            if ($type === 'place') {
+                // Récupérer les données brutes du formulaire 'place'
+                $formData = $request->request->all()['place'] ?? null;
+                $cityId = $formData['cityId'] ?? null;
+                if ($cityId) {
+                    $city = $em->getRepository(City::class)->find((int)$cityId);
+                    if ($city) {
+                        $entity->setCity($city);
+                    }
+                }
+            }
+
+            if ($form->isValid()) {
+                $em->flush();
+                $this->addFlash('success', ucfirst($type).' modifié avec succès.');
+                return $this->redirectToRoute('location_list', ['type' => $type]);
+            }
         }
 
         return $this->render('location/unified_form.html.twig', [
@@ -169,6 +199,7 @@ class LocationController extends AbstractController
             'cityForm' => isset($cityForm) ? $cityForm->createView() : null,
         ]);
     }
+
     #[Route('/admin/location/{type}/{id}/delete', name: 'admin_location_delete')]
     public function deleteEntity(
         string $type,

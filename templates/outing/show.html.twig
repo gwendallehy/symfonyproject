@@ -26,7 +26,7 @@
                 <li>Aucun participant inscrit.</li>
             {% endfor %}
         </ul>
-
+        <a href="{{ path('app_outing_list')}}" class="btn btn-success">Retour à la liste</a>
         {% if outing.isOpenForSubscription() and not outing.participants.contains(app.user) %}
             <a href="{{ path('app_outing_subscribe', {'id': outing.id}) }}" class="btn btn-success">S'inscrire</a>
         {% elseif outing.participants.contains(app.user) and not outing.hasStarted() %}

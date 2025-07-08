@@ -11,56 +11,80 @@
     <div class="profile-container">
 
         <!-- Colonne gauche : photo -->
-        <div class="profile-avatar">
-            {# Image affichée initialement #}
-            <img id="preview-image"
-                 src="{{ userProfile.picture ? asset(userProfile.picture) : asset('images/default-avatar.png') }}"
-                 alt="Photo de {{ userProfile.pseudo }}"
-                 style="max-width: 200px; max-height: 200px;" />
-        </div>
+
 
         <!-- Colonne droite : formulaire -->
         <div class="profile-form">
             <h2>Mon profil</h2>
 
             {{ form_start(userForm, {'attr': {'enctype': 'multipart/form-data'}}) }}
-
+            {{ form_errors(userForm) }} {# erreurs globales en haut du formulaire #}
             <table class="profile-table">
                 <tr>
                     <td>{{ form_label(userForm.pseudo) }}</td>
-                    <td>{{ form_widget(userForm.pseudo) }}</td>
+                    <td>{{ form_widget(userForm.pseudo) }}{{ form_errors(userForm.pseudo) }}</td>
+
                 </tr>
                 <tr>
                     <td>{{ form_label(userForm.firstname) }}</td>
-                    <td>{{ form_widget(userForm.firstname) }}</td>
+                    <td>{{ form_widget(userForm.firstname) }}{{ form_errors(userForm.firstname) }}</td>
                 </tr>
                 <tr>
                     <td>{{ form_label(userForm.lastname) }}</td>
-                    <td>{{ form_widget(userForm.lastname) }}</td>
+                    <td>{{ form_widget(userForm.lastname) }}{{ form_errors(userForm.lastname) }}</td>
                 </tr>
                 <tr>
                     <td>{{ form_label(userForm.phone) }}</td>
-                    <td>{{ form_widget(userForm.phone) }}</td>
+                    <td>{{ form_widget(userForm.phone) }}{{ form_errors(userForm.phone) }}</td>
                 </tr>
                 <tr>
                     <td>{{ form_label(userForm.email) }}</td>
-                    <td>{{ form_widget(userForm.email) }}</td>
+                    <td>{{ form_widget(userForm.email) }}{{ form_errors(userForm.email) }}</td>
                 </tr>
-                <tr>
-                    <td>{{ form_label(userForm.password) }}</td>
-                    <td>{{ form_widget(userForm.password) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_label(userForm.confirmation) }}</td>
-                    <td>{{ form_widget(userForm.confirmation) }}</td>
-                </tr>
+
                 <tr>
                     <td>{{ form_label(userForm.site) }}</td>
-                    <td>{{ form_widget(userForm.site) }}</td>
+                    <td>{{ form_widget(userForm.site) }}{{ form_errors(userForm.site) }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="profile-avatar">
+                            {% if userProfile.picture %}
+                                <img id="preview-image"
+                                     src="{{ asset(userProfile.picture) }}"
+                                     alt="Photo de {{ userProfile.pseudo }}"
+                                     style="max-width: 200px; max-height: 200px;" />
+                            {% else %}
+                                <img id="preview-image"
+                                     src="{{ asset(originPicture) }}"
+                                     alt="Photo par défaut"
+                                     style="max-width: 200px; max-height: 200px;" />
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>{{ form_label(userForm.picture) }}</td>
-                    <td>{{ form_widget(userForm.picture) }}</td>
+                    <td>
+                        <label for="{{ userForm.picture.vars.id }}" class="custom-file-label">
+                            {{ userProfile.picture ? 'Importer une nouvelle photo' : 'Choisir une photo' }}
+                        </label>
+                        {{ form_widget(userForm.picture, {'attr': {'class': 'custom-file-input'}}) }}
+                        {{ form_errors(userForm.picture) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td >
+                        <h4>Modification du mot de passe</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ form_label(userForm.password) }}</td>
+                    <td>{{ form_widget(userForm.password) }}{{ form_errors(userForm.password) }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form_label(userForm.confirmation) }}</td>
+                    <td>{{ form_widget(userForm.confirmation) }}{{ form_errors(userForm.confirmation) }}</td>
                 </tr>
             </table>
 

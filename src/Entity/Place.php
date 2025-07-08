@@ -6,7 +6,7 @@ use App\Repository\PlaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: PlaceRepository::class)]
 class Place
 {
@@ -15,15 +15,31 @@ class Place
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\Length(max: 100)]
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
+    #[Assert\NotBlank(message: "La rue est obligatoire.")]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private ?string $street = null;
 
+    #[Assert\NotNull(message: "La latitude est obligatoire.")]
+    #[Assert\Range(
+        notInRangeMessage: "La latitude doit être comprise entre {{ min }} et {{ max }}.",
+        min: -90,
+        max: 90
+    )]
     #[ORM\Column]
     private ?float $latitude = null;
 
+    #[Assert\NotNull(message: "La longitude est obligatoire.")]
+    #[Assert\Range(
+        notInRangeMessage: "La longitude doit être comprise entre {{ min }} et {{ max }}.",
+        min: -180,
+        max: 180
+    )]
     #[ORM\Column]
     private ?float $longitude = null;
 

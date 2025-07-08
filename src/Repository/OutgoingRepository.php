@@ -21,7 +21,11 @@ class OutgoingRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('o')
             ->leftJoin('o.site', 's')
             ->leftJoin('o.participants', 'p')
-            ->addSelect('s', 'p');
+            ->leftJoin('o.etat', 'e')
+            ->addSelect('s', 'p', 'e')
+            ->orderBy('o.dateBegin', 'DESC')
+            ->andWhere('e.libelle != :archived')
+            ->setParameter('archived', 'Archivée');
 
         if (!empty($filters['site'])) {
             $qb->andWhere('o.site = :site')

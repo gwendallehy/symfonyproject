@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CityRepository::class)]
 class City
 {
@@ -17,9 +17,20 @@ class City
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: "Le nom de la ville est obligatoire.")]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: "Le nom de la ville ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Le code postal est obligatoire.")]
+    #[Assert\Range(
+        notInRangeMessage: "Le code postal doit être compris entre {{ min }} et {{ max }}.",
+        min: 1000,
+        max: 99999
+    )]
     private ?int $postalCode = null;
 
     #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'city')]

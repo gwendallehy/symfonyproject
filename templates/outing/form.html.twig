@@ -9,7 +9,20 @@
     <h1>{{ outingForm.vars.value.id ? 'Modifier la sortie' : 'Créer une sortie' }}</h1>
 
     {{ form_start(outingForm) }}
-
+    {{ form_errors(outingForm) }}
+    <div class="form-group d-flex align-items-center">
+        {{ form_label(outingForm.place) }}
+        {{ form_widget(outingForm.place) }}
+        <button
+            type="submit"
+            name="add_place"
+            value="1"
+            class="btn btn-secondary ml-2"
+            formnovalidate
+        >
+            Ajouter un lieu
+        </button>
+    </div>
     {{ form_row(outingForm.name) }}
     {{ form_row(outingForm.dateBegin) }}
     {{ form_row(outingForm.duration) }}
@@ -17,13 +30,7 @@
     {{ form_row(outingForm.nbSubscriptionMax) }}
     {{ form_row(outingForm.description) }}
 
-    <div class="form-group d-flex align-items-center">
-        {{ form_label(outingForm.place) }}
-        {{ form_widget(outingForm.place) }}
-        <a href="{{ path('location_create', {'type':'place'}) }}" class="btn btn-sm btn-primary ml-2" style="height: 38px; line-height: 38px;">
-            Ajouter un lieu
-        </a>
-    </div>
+
 
     {{ form_row(outingForm.site) }}
 
