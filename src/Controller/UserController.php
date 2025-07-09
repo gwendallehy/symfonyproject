@@ -81,8 +81,12 @@ class UserController extends AbstractController
     {
         /** @var User $user */
         $user = $security->getUser();
-        $originpicture = $user->getPicture();
-        $user->setPicture(null);
+        $originPicture = $user->getPicture();
+
+        if ($originPicture === null || $originPicture === '') {
+            $originPicture = 'images/default_profile.jpg';
+            $user->setPicture($originPicture);
+        }
         $form = $this->createForm(UserTypeForm::class, $user);
         $form->handleRequest($request);
 
@@ -98,8 +102,6 @@ class UserController extends AbstractController
                     $user->setPassword($hashedPassword);
                 }
             }
-
-            // Upload de la photo si fournie
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
                 $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -119,7 +121,7 @@ class UserController extends AbstractController
                     $this->addFlash('danger', "Erreur lors de l'upload de la photo.");
                 }
             }else{
-                $user->setPicture($originpicture);
+                $user->setPicture($originPicture ?: 'images/default_profile.jpg');
             }
 
             // Vérification du pseudo unique
@@ -142,7 +144,7 @@ class UserController extends AbstractController
         return $this->render('user/edit_profile.html.twig', [
             'userForm' => $form->createView(),
             'userProfile' => $user,
-            'originPicture' => $originpicture,
+            'originPicture' => $originPicture,
         ]);
     }
 

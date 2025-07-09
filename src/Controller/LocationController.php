@@ -19,6 +19,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LocationController extends AbstractController
 {
+    /**
+     * Affiche la liste des entités (Place, Site ou City) en fonction du type passé.
+     */
     #[Route('/location/{type}', name: 'location_list')]
     public function listEntities(string $type, EntityManagerInterface $em): Response
     {
@@ -46,8 +49,12 @@ class LocationController extends AbstractController
         ]);
     }
 
+    /**
+     * Crée une ville via une requête AJAX.
+     * Retourne un JSON avec succès ou erreurs de validation.
+     */
     #[Route('/location/city/create-ajax', name: 'location_city_create_ajax', methods: ['POST'])]
-    public function createCityAjax(Request $request, EntityManagerInterface $em, ValidatorInterface $validator)
+    public function createCityAjax(Request $request, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
         $city = new City();
         $form = $this->createForm(CityForm::class, $city);
@@ -66,7 +73,7 @@ class LocationController extends AbstractController
             ]);
         }
 
-        // Si erreur de validation, renvoyer les messages d’erreur (simplifié)
+        // Extraction des erreurs de validation
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
             $errors[] = $error->getMessage();
@@ -78,6 +85,9 @@ class LocationController extends AbstractController
         ], 400);
     }
 
+    /**
+     * Crée une entité dynamique (place, site ou city) via un formulaire.
+     */
     #[Route('/location/{type}/create', name: 'location_create')]
     public function createEntity(string $type, Request $request, EntityManagerInterface $em, SessionInterface $session): Response
     {
@@ -100,12 +110,14 @@ class LocationController extends AbstractController
             default:
                 throw $this->createNotFoundException("Type inconnu.");
         }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($type === 'place') {
                 $formData = $request->request->all()['place'] ?? null;
                 $cityId = $formData['cityId'] ?? null;
+
                 if ($cityId) {
                     $city = $em->getRepository(City::class)->find((int)$cityId);
                     if ($city) {
@@ -115,7 +127,6 @@ class LocationController extends AbstractController
             }
 
             $entity = $form->getData();
-
             $em->persist($entity);
             $em->flush();
 
@@ -126,11 +137,9 @@ class LocationController extends AbstractController
 
             $this->addFlash('success', ucfirst($type) . ' créé avec succès.');
 
-            if ($returnUrl) {
-                return $this->redirect($returnUrl);
-            }
-
-            return $this->redirectToRoute('location_list', ['type' => $type]);
+            return $returnUrl
+                ? $this->redirect($returnUrl)
+                : $this->redirectToRoute('location_list', ['type' => $type]);
         }
 
         return $this->render('location/unified_form.html.twig', [
@@ -140,18 +149,17 @@ class LocationController extends AbstractController
             'returnUrl' => $returnUrl,
         ]);
     }
+
+    /**
+     * Édite une entité (place, site, city) via un formulaire d’administration.
+     */
     #[Route('/admin/location/{type}/{id}/edit', name: 'admin_location_edit')]
-    public function editEntity(
-        string $type,
-        int $id,
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
+    public function editEntity(string $type, int $id, Request $request, EntityManagerInterface $em): Response
+    {
         switch ($type) {
             case 'place':
                 $entity = $em->getRepository(Place::class)->find($id);
                 $form = $this->createForm(PlaceType::class, $entity);
-                // Formulaire de ville pour ajouter une ville à un lieu
                 $cityForm = $this->createForm(CityForm::class, new City());
                 break;
             case 'site':
@@ -167,16 +175,16 @@ class LocationController extends AbstractController
         }
 
         if (!$entity) {
-            throw $this->createNotFoundException(ucfirst($type)." introuvable.");
+            throw $this->createNotFoundException(ucfirst($type) . " introuvable.");
         }
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             if ($type === 'place') {
-                // Récupérer les données brutes du formulaire 'place'
                 $formData = $request->request->all()['place'] ?? null;
                 $cityId = $formData['cityId'] ?? null;
+
                 if ($cityId) {
                     $city = $em->getRepository(City::class)->find((int)$cityId);
                     if ($city) {
@@ -187,7 +195,7 @@ class LocationController extends AbstractController
 
             if ($form->isValid()) {
                 $em->flush();
-                $this->addFlash('success', ucfirst($type).' modifié avec succès.');
+                $this->addFlash('success', ucfirst($type) . ' modifié avec succès.');
                 return $this->redirectToRoute('location_list', ['type' => $type]);
             }
         }
@@ -200,12 +208,12 @@ class LocationController extends AbstractController
         ]);
     }
 
+    /**
+     * Supprime une entité (place, site, city) depuis l’administration.
+     */
     #[Route('/admin/location/{type}/{id}/delete', name: 'admin_location_delete')]
-    public function deleteEntity(
-        string $type,
-        int $id,
-        EntityManagerInterface $em
-    ): Response {
+    public function deleteEntity(string $type, int $id, EntityManagerInterface $em): Response
+    {
         switch ($type) {
             case 'place':
                 $entity = $em->getRepository(Place::class)->find($id);
@@ -221,14 +229,13 @@ class LocationController extends AbstractController
         }
 
         if (!$entity) {
-            throw $this->createNotFoundException(ucfirst($type)." introuvable.");
+            throw $this->createNotFoundException(ucfirst($type) . " introuvable.");
         }
 
         $em->remove($entity);
         $em->flush();
 
-        $this->addFlash('success', ucfirst($type).' supprimé avec succès.');
+        $this->addFlash('success', ucfirst($type) . ' supprimé avec succès.');
         return $this->redirectToRoute('location_list', ['type' => $type]);
     }
-
 }

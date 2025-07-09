@@ -5,17 +5,22 @@ namespace App\Controller;
 use App\Entity\Site;
 use App\Entity\User;
 use App\Form\UserTypeForm;
-use App\Repository\UserRepository;
 use App\Form\CsvImportType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminPanelController extends AbstractController
 {
+    /**
+     * Liste tous les utilisateurs.
+     */
     #[Route('/admin/users', name: 'admin_users')]
     public function listUsers(UserRepository $userRepository): Response
     {
@@ -27,8 +32,7 @@ class AdminPanelController extends AbstractController
     }
 
     /**
-     * US 1007 - Ajouter un utilisateur
-     * En tant qu’admin, je peux créer un utilisateur manuellement via un formulaire.
+     * US 1007 - Créer un nouvel utilisateur manuellement via un formulaire.
      */
     #[Route('/admin/user/create', name: 'admin_user_create')]
     public function createUser(
@@ -44,25 +48,29 @@ class AdminPanelController extends AbstractController
             $plainPassword = $form->get('password')->getData();
             $confirmation = $form->get('confirmation')->getData();
 
+            // Vérifie que le mot de passe est présent et confirmé
             if (empty($plainPassword)) {
                 $this->addFlash('error', 'Le mot de passe est requis.');
             } elseif ($plainPassword !== $confirmation) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
             } else {
+                // Hash du mot de passe
                 $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
                 $user->setPassword($hashedPassword);
 
-                // Rôles et statut
+                // Attributs par défaut
                 $user->setRoles(['ROLE_USER']);
                 $user->setActive(true);
-                $user->setAdministrator(false); // Par défaut
+                $user->setAdministrator(false);
 
-                // Upload photo (optionnel)
+                // Gestion de la photo de profil
                 $pictureFile = $form->get('picture')->getData();
                 if ($pictureFile) {
                     $newFilename = uniqid().'.'.$pictureFile->guessExtension();
                     $pictureFile->move($this->getParameter('pictures_directory'), $newFilename);
                     $user->setPicture($newFilename);
+                } else {
+                    $user->setPicture('default_profile.jpg');
                 }
 
                 $entityManager->persist($user);
@@ -78,10 +86,8 @@ class AdminPanelController extends AbstractController
         ]);
     }
 
-
     /**
-     * US 1008 - Désactiver un utilisateur
-     * En tant qu’admin, je peux rendre inactif un utilisateur sélectionné.
+     * US 1008 - Activer/désactiver un utilisateur.
      */
     #[Route('/admin/user/{id}/toggle-active', name: 'admin_user_toggle_active')]
     public function toggleActive(User $user, EntityManagerInterface $entityManager): Response
@@ -89,27 +95,22 @@ class AdminPanelController extends AbstractController
         $user->setActive(!$user->isActive());
         $entityManager->flush();
 
-        $this->addFlash('success', sprintf(
-            "L'utilisateur %s a été %s.",
-            $user->getPseudo(),
-            $user->isActive() ? 'réactivé' : 'désactivé'
-        ));
+        $status = $user->isActive() ? 'réactivé' : 'désactivé';
+        $this->addFlash('success', "L'utilisateur {$user->getPseudo()} a été $status.");
 
         return $this->redirectToRoute('admin_users');
     }
 
     /**
-     * US 1009 - Supprimer un utilisateur
-     * En tant qu’admin, je peux supprimer un utilisateur sélectionné.
+     * US 1009 - Supprimer un utilisateur.
      */
     #[Route('/admin/user/{id}/delete', name: 'admin_user_delete', methods: ['POST', 'GET'])]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
     {
-        // Désinscription de toutes les sorties auxquelles il participe
+        // Désinscription de toutes les sorties
         foreach ($user->getOutings() as $outing) {
             $outing->removeParticipant($user);
         }
-
 
         $entityManager->remove($user);
         $entityManager->flush();
@@ -119,6 +120,9 @@ class AdminPanelController extends AbstractController
         return $this->redirectToRoute('admin_users');
     }
 
+    /**
+     * Modifier un utilisateur.
+     */
     #[Route('/admin/user/{id}/edit', name: 'admin_user_edit')]
     public function editUser(
         User $user,
@@ -126,6 +130,9 @@ class AdminPanelController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+        $originPicture = $user->getPicture() ?: 'images/default_profile.jpg';
+        $user->setPicture($originPicture);
+
         $form = $this->createForm(UserTypeForm::class, $user);
         $form->handleRequest($request);
 
@@ -133,11 +140,15 @@ class AdminPanelController extends AbstractController
             $plainPassword = $form->get('password')->getData();
             $confirmation = $form->get('confirmation')->getData();
 
+            // Vérifie le mot de passe si fourni
             if ($plainPassword) {
                 if ($plainPassword !== $confirmation) {
                     $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
-                    return $this->render('admin/user_form.html.twig', [
-                        'form' => $form->createView(),
+                    return $this->render('user/edit_profile.html.twig', [
+                        'userForm' => $form->createView(),
+                        'editMode' => true,
+                        'userProfile' => $user,
+                        'originPicture' => $originPicture,
                     ]);
                 }
 
@@ -145,128 +156,144 @@ class AdminPanelController extends AbstractController
                 $user->setPassword($hashedPassword);
             }
 
-            // Upload de la photo (optionnel)
+            // Gestion de la photo
             $pictureFile = $form->get('picture')->getData();
             if ($pictureFile) {
-                $newFilename = uniqid().'.'.$pictureFile->guessExtension();
-                $pictureFile->move($this->getParameter('pictures_directory'), $newFilename);
-                $user->setPicture($newFilename);
+                $safeFilename = transliterator_transliterate(
+                    'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                    pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME)
+                );
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $pictureFile->guessExtension();
+
+                try {
+                    $pictureFile->move($this->getParameter('pictures_directory'), $newFilename);
+                    $user->setPicture('pictures/' . $newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Erreur lors de l'upload de la photo.");
+                }
+            } else {
+                $user->setPicture($originPicture);
+            }
+
+            // Vérifie unicité du pseudo
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['pseudo' => $user->getPseudo()]);
+            if ($existingUser && $existingUser->getId() !== $user->getId()) {
+                $form->get('pseudo')->addError(new FormError('Ce pseudo est déjà utilisé.'));
+                return $this->render('user/edit_profile.html.twig', [
+                    'userForm' => $form->createView(),
+                    'editMode' => true,
+                    'userProfile' => $user,
+                    'originPicture' => $originPicture,
+                ]);
             }
 
             $entityManager->flush();
-
             $this->addFlash('success', 'Utilisateur mis à jour avec succès.');
+
             return $this->redirectToRoute('admin_users');
         }
 
-        return $this->render('admin/user_form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('user/edit_profile.html.twig', [
+            'userForm' => $form->createView(),
             'editMode' => true,
+            'userProfile' => $user,
+            'originPicture' => $originPicture,
         ]);
     }
 
-
+    /**
+     * Import d'utilisateurs via un fichier CSV.
+     */
     #[Route('/admin/user/import', name: 'admin_user_import')]
     public function importUsers(
-        Request                     $request,
-        EntityManagerInterface      $entityManager,
+        Request $request,
+        EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(CsvImportType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $csvFile = $form->get('csvFile')->getData();
 
-            if ($csvFile) {
-                $filePath = $csvFile->getPathName();
-                if (($handle = fopen($filePath, "r")) !== false) {
-                    $header = null;
-                    $createUsers = 0;
-                    $errors = [];
-                    $linenumber = 0;
-                    $createdPseudos = [];
+            if ($csvFile && ($handle = fopen($csvFile->getPathName(), "r")) !== false) {
+                $header = null;
+                $createUsers = 0;
+                $errors = [];
+                $linenumber = 0;
+                $createdPseudos = [];
 
-                    while (($row = fgetcsv($handle, 1000, ";")) !== false) {
-                        $linenumber++;
+                while (($row = fgetcsv($handle, 1000, ";")) !== false) {
+                    $linenumber++;
 
-                        if (!$header) {
-                            $header = $row;
-                            continue;
-                        }
-
-                        if (count($header) !== count($row)) {
-                            $errors[] = "Ligne $linenumber : colonnes attendues = " . count($header) . ", trouvées = " . count($row);
-                            continue;
-                        }
-
-                        $data = array_combine($header, $row);
-
-                        // Vérifie doublon pseudo dans CSV
-                        if (in_array($data['pseudo'], $createdPseudos)) {
-                            $errors[] = "Ligne $linenumber : le pseudo '{$data['pseudo']}' est déjà utilisé dans ce fichier.";
-                            continue;
-                        }
-
-                        // Vérifie si email existe déjà en base
-                        $existingMail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-                        if ($existingMail) {
-                            $errors[] = "Ligne $linenumber : l'utilisateur avec l'email : {$data['email']} existe déjà.";
-                            continue;
-                        }
-
-                        // Vérifie si pseudo existe déjà en base
-                        $existingPseudo = $entityManager->getRepository(User::class)->findOneBy(['pseudo' => $data['pseudo']]);
-                        if ($existingPseudo) {
-                            $errors[] = "Ligne $linenumber : l'utilisateur avec le pseudo : {$data['pseudo']} existe déjà.";
-                            continue;
-                        }
-
-                        // Vérifie si site existe
-                        $site = $entityManager->getRepository(Site::class)->findOneBy(['name' => $data['site']]);
-                        if (!$site) {
-                            $errors[] = "Ligne $linenumber : Le site {$data['site']} pour l'utilisateur {$data['pseudo']} n'existe pas.";
-                            continue;
-                        }
-
-                    //Création  de l'utilisateur
-                        $user = new User();
-                        $user->setPseudo($data['pseudo']);
-                        $user->setFirstname($data['firstname']);
-                        $user->setLastname($data['lastname']);
-                        $user->setEmail($data['email']);
-                        $user->setPhone($data['phone']);
-                        $user->setAdministrator(false);
-                        $user->setActive(true);
-                        $user->setSite($site);
-
-                        // Force le rôle à "ROLE_USER"
-                        $user->setRoles(['ROLE_USER']);
-
-                        // Hachage du mot de passe en clair (depuis CSV)
-                        $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
-                        $user->setPassword($hashedPassword);
-
-                        //Importe picture si il existe
-                        if (isset($data['picture'])) {
-                            $user->setPicture('../images/default_profile.jpg');
-                        }
-
-                        $entityManager->persist($user);
-                        $createUsers++;
+                    // Stockage des en-têtes
+                    if (!$header) {
+                        $header = $row;
+                        continue;
                     }
 
-                    fclose($handle);
-                    $entityManager->flush();
-
-                    $this->addFlash("success", "$createUsers utilisateur(s) importé(s) avec succès.");
-                    foreach ($errors as $err) {
-                        $this->addFlash("warning", $err);
+                    // Vérifie que la ligne correspond au format attendu
+                    if (count($header) !== count($row)) {
+                        $errors[] = "Ligne $linenumber : nombre de colonnes incorrect.";
+                        continue;
                     }
 
-                    return $this->redirectToRoute('admin_users');
+                    $data = array_combine($header, $row);
+
+                    // Vérifie doublons dans le fichier
+                    if (in_array($data['pseudo'], $createdPseudos)) {
+                        $errors[] = "Ligne $linenumber : pseudo '{$data['pseudo']}' déjà présent.";
+                        continue;
+                    }
+
+                    // Vérifie unicité email et pseudo
+                    if ($entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']])) {
+                        $errors[] = "Ligne $linenumber : email '{$data['email']}' déjà existant.";
+                        continue;
+                    }
+
+                    if ($entityManager->getRepository(User::class)->findOneBy(['pseudo' => $data['pseudo']])) {
+                        $errors[] = "Ligne $linenumber : pseudo '{$data['pseudo']}' déjà existant.";
+                        continue;
+                    }
+
+                    // Vérifie que le site existe
+                    $site = $entityManager->getRepository(Site::class)->findOneBy(['name' => $data['site']]);
+                    if (!$site) {
+                        $errors[] = "Ligne $linenumber : site '{$data['site']}' introuvable.";
+                        continue;
+                    }
+
+                    // Création de l'utilisateur
+                    $user = new User();
+                    $user->setPseudo($data['pseudo']);
+                    $user->setFirstname($data['firstname']);
+                    $user->setLastname($data['lastname']);
+                    $user->setEmail($data['email']);
+                    $user->setPhone($data['phone']);
+                    $user->setAdministrator(false);
+                    $user->setActive(true);
+                    $user->setSite($site);
+                    $user->setRoles(['ROLE_USER']);
+                    $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
+
+                    // Image par défaut
+                    $user->setPicture('../images/default_profile.jpg');
+
+                    $entityManager->persist($user);
+                    $createUsers++;
+                    $createdPseudos[] = $data['pseudo'];
                 }
+
+                fclose($handle);
+                $entityManager->flush();
+
+                $this->addFlash("success", "$createUsers utilisateur(s) importé(s) avec succès.");
+                foreach ($errors as $err) {
+                    $this->addFlash("warning", $err);
+                }
+
+                return $this->redirectToRoute('admin_users');
             }
         }
 
@@ -275,7 +302,9 @@ class AdminPanelController extends AbstractController
         ]);
     }
 
-
+    /**
+     * Annulation de sortie en tant qu’admin (en cours de développement).
+     */
     #[Route('/admin/outing/{id}/cancel', name: 'admin_outing_cancel')]
     public function cancelOutingAsAdmin(int $id): Response
     {

@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Sites
-        $sitesData = ['Paris', 'Lyon', 'Marseille', 'Bordeaux'];
+        $sitesData = ['Quimper', 'Rennes', 'Niort', 'Nantes'];
         $sites = [];
         foreach ($sitesData as $siteName) {
             $site = (new Site())->setName($siteName);
@@ -44,10 +44,10 @@ class AppFixtures extends Fixture
 
         // Villes
         $citiesData = [
-            ['name' => 'Paris', 'postalCode' => 75000],
-            ['name' => 'Lyon', 'postalCode' => 69000],
-            ['name' => 'Marseille', 'postalCode' => 13000],
-            ['name' => 'Bordeaux', 'postalCode' => 33000],
+            ['name' => 'Quimper', 'postalCode' => 29000],
+            ['name' => 'Rennes', 'postalCode' => 35131],
+            ['name' => 'Niort', 'postalCode' => 79000],
+            ['name' => 'Nantes', 'postalCode' => 44800],
         ];
         $cities = [];
         foreach ($citiesData as $cityData) {

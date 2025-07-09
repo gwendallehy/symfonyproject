@@ -18,7 +18,7 @@
                     </div>
 
                 {% endif %}
-
+                <a href="{{ path('group_list') }}">Mes groupes</a>
                 <a href="{{ path('app_outing_list') }}">Sorties</a>
                 <a href="{{ path('app_user_profile', {'id': app.user.id}) }}">Profil</a>
             {% endif %}

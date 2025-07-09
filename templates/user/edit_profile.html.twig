@@ -49,17 +49,10 @@
                 <tr>
                     <td>
                         <div class="profile-avatar">
-                            {% if userProfile.picture %}
                                 <img id="preview-image"
                                      src="{{ asset(userProfile.picture) }}"
                                      alt="Photo de {{ userProfile.pseudo }}"
                                      style="max-width: 200px; max-height: 200px;" />
-                            {% else %}
-                                <img id="preview-image"
-                                     src="{{ asset(originPicture) }}"
-                                     alt="Photo par défaut"
-                                     style="max-width: 200px; max-height: 200px;" />
-                            {% endif %}
                         </div>
                     </td>
                 </tr>

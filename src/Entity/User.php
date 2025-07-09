@@ -69,7 +69,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $active;
 
-    #[Assert\Url(message: "L'URL de la photo '{{ value }}' n'est pas valide.")]
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $picture = null;
 
@@ -87,10 +86,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Outgoing::class, mappedBy: 'participants')]
     private Collection $outings;
 
+    #[ORM\OneToMany(targetEntity: Group::class, mappedBy: 'owner')]
+    private Collection $ownedGroups;
+
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'members')]
+    private Collection $groups;
     public function __construct()
     {
         $this->organizedOutings = new ArrayCollection();
         $this->outings = new ArrayCollection();
+        $this->ownedGroups = new ArrayCollection();
+        $this->groups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -252,6 +258,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return  $this;
     }
 
+    public function getOwnedGroups(): Collection
+    {
+        return $this->ownedGroups;
+    }
+
+    public function addOwnedGroup(Group $group): self
+    {
+        if (!$this->ownedGroups->contains($group)) {
+            $this->ownedGroups[] = $group;
+            $group->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnedGroup(Group $group): self
+    {
+        if ($this->ownedGroups->removeElement($group)) {
+            if ($group->getOwner() === $this) {
+                $group->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+
+    public function addGroup(Group $group): self
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+            $group->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): self
+    {
+        if ($this->groups->removeElement($group)) {
+            $group->removeMember($this);
+        }
+
+        return $this;
+    }
 
     public function eraseCredentials(): void
     {

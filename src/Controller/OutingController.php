@@ -39,14 +39,15 @@ class OutingController extends AbstractController
         Request $request,
         EtatRepository $etatRepository,
         EntityManagerInterface $entityManager,
-    ): Response {
+    ): Response
+    {
         $user = $security->getUser();
         $formOptions = [];
 
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            $isMobile = false;
-        } else {
+        $isMobile = false;
+
+        if ($request) {
             $ua = $request->headers->get('User-Agent', '');
             $isMobile = preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $ua) === 1;
         }
@@ -55,16 +56,19 @@ class OutingController extends AbstractController
             $formOptions['data'] = [
                 'subscribed' => true,
             ];
-            $isMobile = true;
-        } else {
-            $isMobile = false;
         }
 
         $form = $this->createForm(OutingFilterTypeForm::class, null, $formOptions);
         $form->handleRequest($request);
-        $filters = $isMobile ? ['site' => $user->getSite()] : $form->getData();
 
-        $outings = $outgoingRepository->findFilteredOutings($user, $filters ?? []);
+        if ($isMobile) {
+            $filters = ['subscribed' => true];
+        } else {
+            $filters = $form->getData() ?? [];
+        }
+
+        $outings = $outgoingRepository->findFilteredOutings($user, $filters);
+
         foreach ($outings as $outing) {
             $outing->updateEtat($etatRepository);
         }
