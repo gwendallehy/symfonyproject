@@ -8,7 +8,8 @@
 body, html {
     height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url('../images/bg-loginform.jpg'); /* Mets ici ta propre image */
+    /*background-image: url('../images/bg-loginform.jpg');*/
+    background-image: url('../images/bg2.jpeg');
     background-size: cover;
     background-position: center;
 }
@@ -29,6 +30,7 @@ body, html {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center
 }
 
 .welcome-section h1 {
@@ -42,10 +44,12 @@ body, html {
     max-width: 400px;
     margin-bottom: 30px;
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     opacity: 0.85;
 }
-
+.welcome-section img{
+    width: 600px;
+}
 /* Social icons container */
 .social-icons {
     display: flex;
@@ -84,6 +88,7 @@ body, html {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
+
 }
 
 .signin-section input[type="text"],
@@ -108,7 +113,11 @@ body, html {
 }
 
 button {
-    background-color: #ff4500;
+    background: linear-gradient(
+        to right,
+        rgb(0, 208, 255),
+        rgb(2, 128, 174)
+    );
     color: white;
     border: none;
     border-radius: 5px;
@@ -134,8 +143,8 @@ button:hover {
 
 .forgot-password {
     margin-top: 15px;
-    color: #000000;
-    font-size: 0.9rem;
+    color: black;
+    font-size: 1.1rem;
     text-decoration: none;
     display: inline-block;
     transition: color 0.3s ease;
@@ -153,16 +162,30 @@ button:hover {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background-size: cover;
         background-position: center;
+        background: linear-gradient(
+            to right,
+            rgb(218, 117, 89),
+            rgb(196, 69, 112)
+        );
     }
 
     .container {
         flex-direction: column;
+        padding-top: 50px;
     }
 
     .welcome-section {
         display: none;
     }
-
+    .signin-section{
+        justify-content: normal;
+    }
+    .signin-section label {
+        color: white;
+    }
+    h2{
+        color: white;
+    }
     .signin-section {
         width: 100%;
         padding: 30px 20px;
@@ -188,7 +211,8 @@ button:hover {
     }
 
     .remember-me {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
         align-items: flex-start;
         font-size: 0.85rem;
     }

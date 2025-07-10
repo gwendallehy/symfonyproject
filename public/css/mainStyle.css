@@ -4,7 +4,12 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+
+
+
+
+    background-size: cover;
+    background-position: center;
     color: #333;
 }
 
@@ -18,10 +23,16 @@ a:hover {
     text-decoration: none;
     color: #0056b3;
 }
-
+.container{
+    background-color: rgba(255, 255, 255, 0.85);
+}
 /* Header */
 header {
-    background-color: rgb(179, 206, 199);
+    background: linear-gradient(
+        to right,
+        rgb(218, 117, 89),
+        rgb(196, 69, 112)
+    );
     color: white;
     display: flex;
     justify-content: space-between;
@@ -31,7 +42,7 @@ header {
 }
 
 header img {
-    width: 150px;
+    width: 200px;
 }
 
 header .header-container {
@@ -47,7 +58,7 @@ header .header-container {
 
 .dropbtn {
     background-color: transparent;
-    color: rgb(5, 60, 55);
+    color: white;
     font-weight: 700;
     font-size: 1rem;
     border: none;
@@ -89,7 +100,7 @@ header .header-container {
 
 nav a {
     margin-left: 20px;
-    color: rgb(5, 60, 55);
+    color:white;
     font-weight: 700;
     font-size: 1rem;
     transition: color 0.3s ease;
@@ -117,10 +128,14 @@ main:hover {
 
 /* Footer */
 footer {
-    background-color: #222;
-    color: #ddd;
+    background: linear-gradient(
+        to right,
+        rgb(218, 117, 89),
+        rgb(196, 69, 112)
+    );
+    color: white;
     text-align: center;
-    padding: 15px 0;
+    padding: 5px 0;
     font-size: 0.9rem;
     margin-top: 50px;
 }
@@ -142,9 +157,12 @@ h1 {
 }
 
 p {
-    color: #555;
+    color: black;
     font-size: 1rem;
     line-height: 1.5;
+}
+footer p{
+    color: white;
 }
 
 ul li {

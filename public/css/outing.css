@@ -6,8 +6,11 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f7fa;
     color: #333;
-}
 
+}
+.container{
+ background-color: rgba(255, 255, 255, 0.74);
+}
 a {
     color: #007BFF;
     text-decoration: none;
@@ -41,7 +44,7 @@ td a {
     padding: 6px 12px;              /* Espace intérieur agréable */
     text-decoration: none;
     color: #007BFF;                 /* Bleu standard Bootstrap */
-    background-color: #d0e7ff;     /* Un bleu clair plus doux que lightblue */
+    background-color: rgba(236, 245, 255, 0.85);     /* Un bleu clair plus doux que lightblue */
     border-radius: 6px;             /* Coins arrondis plus doux */
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
@@ -56,7 +59,7 @@ td a:hover {
     cursor: pointer;
 }
 nav a {
-    color: #053c37;
+    color: white;
     font-weight: 700;
     margin: 0 8px;
     font-size: 1rem;
@@ -80,17 +83,17 @@ nav a:hover {
 }
 
 .etat-cloture {
-    background-color: #fff3cd; /* orange clair (jaune pâle) */
+    background-color: #ffe8cd; /* orange clair (jaune pâle) */
     color: #856404; /* orange foncé */
 }
 
 .etat-encours {
-    background-color: #f8d7da; /* rouge clair */
+    background-color: #ffd2d5; /* rouge clair */
     color: #721c24; /* rouge foncé */
 }
 
 .etat-passe {
-    background-color: #e2e3e5; /* gris clair */
+    background-color: #cccdcd; /* gris clair */
     color: #6c757d; /* gris foncé */
 }
 
@@ -115,6 +118,7 @@ form {
     display: flex;
     flex-direction: column;
     justify-content: normal;
+    background-color: transparent;
 }
 
 /* Colonnes formulaire */
@@ -283,7 +287,7 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
 }
 
 .outings-list tbody tr:hover {
-    background-color: #f9f9f9;
+    background-color: #fdf2e4;
 }
 
 /* Bouton créer une sortie */
@@ -292,8 +296,13 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
     padding: 0;
     width: 300px;
     height: 50px;
-    background-color: transparent;
-    color: #053c37;
+    background: linear-gradient(
+        to right,
+        rgb(218, 117, 89),
+        rgb(196, 69, 112)
+    );
+    border:none;
+    color: white;
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
@@ -307,19 +316,30 @@ a.create-outing {
     padding: 0;
     text-decoration: none;
     align-content: center;
+    border:2px solid black;
 
 }
 
 
 button.create-outing:hover a{
     color: white;
+
 }
 
 .create-outing:hover {
-    background-color: #053c37;
-    color: white;
-}
+    background: linear-gradient(
+        to right,
+        rgb(218, 117, 89),
+        rgb(196, 69, 112)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text; /* for Firefox */
+    color: transparent; /* fallback */
+    background-color: white;
 
+    /* if you still want the background to be white */
+}
 /* Cartes sorties */
 .outing {
     background-color: white;
@@ -435,7 +455,7 @@ button.create-outing:hover a{
 /* Formulaire Création/Modification Sortie */
 .outing-form-container {
     margin: 30px 50px;
-    background-color: white;
+    background-color: transparent;
     /*padding: 30px 40px;*/
     border-radius: 10px;
     /*box-shadow: 0 0 10px rgba(0,0,0,0.07);*/
@@ -650,6 +670,7 @@ form ul li {
     }
     .container{
         margin: 10px;
+
     }
     .outing-detail,
     .outing-form-container {

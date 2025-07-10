@@ -123,6 +123,7 @@ form button {
 .address-dropdown li {
     padding: 5px 10px;
     cursor: pointer;
+    color: black    ;
 }
 
 .address-dropdown li:hover {

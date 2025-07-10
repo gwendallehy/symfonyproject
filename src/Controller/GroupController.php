@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Group;
 use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use GroupType;
+use App\Form\GroupType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
