@@ -34,7 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
     #[Assert\Length(min: 6)]
     #[ORM\Column]
     private string $password;

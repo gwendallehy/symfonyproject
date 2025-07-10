@@ -36,6 +36,25 @@ header {
     font-size: 1.5rem;
 }
 
+td a {
+    display: inline-block;          /* Pour pouvoir appliquer padding et effets */
+    padding: 6px 12px;              /* Espace intérieur agréable */
+    text-decoration: none;
+    color: #007BFF;                 /* Bleu standard Bootstrap */
+    background-color: #d0e7ff;     /* Un bleu clair plus doux que lightblue */
+    border-radius: 6px;             /* Coins arrondis plus doux */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+    font-weight: 500;
+}
+
+td a:hover {
+    color: #1e7e34;                /* Vert foncé */
+    background-color: #c3f0c2;     /* Vert très clair */
+    box-shadow: 0 4px 8px rgba(30, 126, 52, 0.3);
+    text-decoration: none;
+    cursor: pointer;
+}
 nav a {
     color: #053c37;
     font-weight: 700;
@@ -52,6 +71,31 @@ nav a:hover {
     margin: 2px 0;
     font-size: 0.9rem;
     color: white;
+}
+/* Couleurs très claires pour fond et texte lisible */
+
+.etat-ouvert {
+    background-color: #d4edda; /* vert clair */
+    color: #155724; /* vert foncé */
+}
+
+.etat-cloture {
+    background-color: #fff3cd; /* orange clair (jaune pâle) */
+    color: #856404; /* orange foncé */
+}
+
+.etat-encours {
+    background-color: #f8d7da; /* rouge clair */
+    color: #721c24; /* rouge foncé */
+}
+
+.etat-passe {
+    background-color: #e2e3e5; /* gris clair */
+    color: #6c757d; /* gris foncé */
+}
+
+.outings-list table tr {
+    transition: background-color 0.3s ease;
 }
 
 /* Formulaire filtres */
@@ -258,8 +302,12 @@ select:focus, input[type="text"]:focus, input[type="date"]:focus {
 }
 
 a.create-outing {
+    display: block;
     margin: 0;
     padding: 0;
+    text-decoration: none;
+    align-content: center;
+
 }
 
 
@@ -458,7 +506,14 @@ button.create-outing:hover a{
         margin: 20px;
         padding: 20px;
     }
-
+    .outing-detail {
+        background-color: transparent;
+        padding: 25px 30px;
+        margin: 30px 50px;
+        border-radius: 10px;
+        box-shadow: none;
+        max-width: 800px;
+    }
     header {
         flex-direction: column;
         align-items: flex-start;
@@ -527,9 +582,10 @@ form ul li {
 /* Responsive - Mobile Phones (max-width: 576px) */
 @media (max-width: 576px) {
     header {
-        padding: 15px 20px;
-        flex-direction: column;
-        align-items: flex-start;
+        display: flex;
+        padding: 5px 10px;
+        flex-direction: row;
+        justify-content: center
     }
 
     header img {
@@ -539,15 +595,16 @@ form ul li {
 
     .header-container,
     nav {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 10px;
         width: 100%;
     }
 
     nav a {
         margin: 5px 0;
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 
     main {
@@ -591,17 +648,24 @@ form ul li {
     .outings-list table {
         width: 600px; /* Horizontal scroll on small screens */
     }
-
+    .container{
+        margin: 10px;
+    }
     .outing-detail,
     .outing-form-container {
-        margin: 15px;
-        padding: 15px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
     }
 
     .outing-form-container .btn,
+
     .outing-detail .btn {
-        width: 100%;
-        text-align: center;
+        width: 50%;
+        align-content: center;
     }
 
     .logged {

@@ -27,10 +27,13 @@
             {% endfor %}
         </ul>
         <a href="{{ path('app_outing_list')}}" class="btn btn-success">Retour à la liste</a>
-        {% if outing.isOpenForSubscription() and not outing.participants.contains(app.user) %}
-            <a href="{{ path('app_outing_subscribe', {'id': outing.id}) }}" class="btn btn-success">S'inscrire</a>
-        {% elseif outing.participants.contains(app.user) and not outing.hasStarted() %}
-            <a href="{{ path('app_outing_unsubscribe', {'id': outing.id}) }}" class="btn btn-warning">Se désister</a>
+
+        {% if not isMobile %}
+            {% if outing.isOpenForSubscription() and not outing.participants.contains(app.user) %}
+                <a href="{{ path('app_outing_subscribe', {'id': outing.id}) }}" class="btn btn-success">S'inscrire</a>
+            {% elseif outing.participants.contains(app.user) and not outing.hasStarted() %}
+                <a href="{{ path('app_outing_unsubscribe', {'id': outing.id}) }}" class="btn btn-warning">Se désister</a>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}

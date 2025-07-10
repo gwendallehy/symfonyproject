@@ -27,6 +27,15 @@ class GroupRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findByOwner(User $user): array
+    {
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.owner', 'o')
+            ->where('o = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Group[] Returns an array of Group objects

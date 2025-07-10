@@ -21,7 +21,7 @@ class GroupController extends AbstractController
     public function list(GroupRepository $groupRepository): Response
     {
         $user = $this->getUser();
-        $groups = $groupRepository->findByUserMembership($user);
+        $groups = $groupRepository->findByOwner($user);
 
         return $this->render('group/list.html.twig', [
             'groups' => $groups,

@@ -1,4 +1,5 @@
 <?php
+namespace App\Form;
 // src/Form/GroupType.php
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
