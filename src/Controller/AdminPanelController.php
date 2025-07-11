@@ -68,7 +68,7 @@ class AdminPanelController extends AbstractController
                 if ($pictureFile) {
                     $newFilename = uniqid().'.'.$pictureFile->guessExtension();
                     $pictureFile->move($this->getParameter('pictures_directory'), $newFilename);
-                    $user->setPicture($newFilename);
+                    $user->setPicture('pictures/' . $newFilename);
                 } else {
                     $user->setPicture('default_profile.jpg');
                 }
